@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - PICCOLA</title>
+      <!-- Hoja de estilos principal -->
+    <link rel="stylesheet" th:href="@{/client/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/client/css/contactos.css}">
+    
+    <!-- Google Fonts para la tipografía del texto (Montserrat) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- =================================================================== -->
+    <!-- LÍNEA ESENCIAL PARA CARGAR LOS ICONOS DE FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- =================================================================== -->
+
+</head>
+<body>    <!--Encabezado para todas las paginas-->
+    <header class="header">
+        <div class="contenedor-logo-piccola">
+            <a th:href="@{/}"><img class="logo-piccola" th:src="@{/imagenes/logoEmpresa.png}" alt="Logo Piccola"></a>  
+        </div>
+        <nav class="nav">
+            <ul class="item-menus-general">
+                <li class="item-menus"><a th:href="@{/}" class="link-menus">Inicio</a></li>  
+                <li class="item-menus"><a th:href="@{/menu}" class="link-menus">Menú</a></li>
+                <li class="item-menus"><a th:href="@{/nosotros}" class="link-menus">Nosotros</a></li>
+                <li class="item-menus"><a th:href="@{/contacto}" class="link-menus">Contactos</a></li>
+            </ul>
+        </nav>
+        <div class="contenedor-botones">
+            <button><img class="logo-login" th:src="@{/imagenes/user.svg}" alt="Login"></button>
+            <button><img class="logo-carrito" th:src="@{/imagenes/carrito.svg}" alt="Carrito"></button>        
+        </div>
+    </header>
+
+    <!-- ========= INICIO DE LA SECCIÓN DE CONTACTO ========= -->
+    <main class="main-contact">
+        <div class="contact-container">
+            <div class="contact-header">
+                <h1>Hablemos</h1>
+                <p>Estamos aquí para ayudarte. Rellena el formulario o utiliza nuestros datos de contacto directo.</p>
+            </div>
+
+            <div class="contact-content">
+                <!-- Columna Izquierda: Información y Mapa -->
+                <div class="contact-info">
+                    <h3>Información de Contacto</h3>
+                    <p>Encuéntranos en nuestra sucursal o contáctanos por teléfono y correo. ¡Te esperamos!</p>
+                    
+                    <div class="info-block">
+                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="info-text">
+                            <h4>Dirección</h4>
+                            <p>Urb.San Luis. Cerca del Parque Victor Raul</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-block">
+                        <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
+                        <div class="info-text">
+                            <h4>Teléfono</h4>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+
+                    <div class="info-block">
+                        <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="info-text">
+                            <h4>Email</h4>
+                            <p>hola@piccola.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-block">
+                        <div class="info-icon"><i class="fas fa-clock"></i></div>
+                        <div class="info-text">
+                            <h4>Horario</h4>
+                            <p>Lunes - Domingo: 12:00 PM - 11:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Formulario de Contacto -->
+                <div class="contact-form-wrapper">
+                    <form th:action="@{/contacto}" method="post" class="contact-form">
+                        <h3>Envíanos un Mensaje</h3>
+                        <div class="form-group">
+                            <label for="name">Nombre</label>
+                            <input type="text" id="name" name="name" placeholder="Tu nombre completo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="tu.correo@ejemplo.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Asunto</label>
+                            <input type="text" id="subject" name="subject" placeholder="Ej: Reserva, Consulta, etc." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mensaje</label>
+                            <textarea id="message" name="message" rows="5" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Enviar Mensaje <i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Mapa -->
+            <div class="map-container">
+                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.088323869151!2d-122.4194154846813!3d37.77492957975904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085808c1e4887ab%3A0x4c2d3a9d9e4a0d9b!2sSan%20Francisco%2C%20CA%2C%20USA!5e0!3m2!1sen!2smx!4v1678886400000" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </main>
+    <!-- ========= FIN DE LA SECCIÓN DE CONTACTO ========= -->
+
+     <footer class="footer">
+    <div class="footer-content">
+        <div class="footer-main">
+            <div class="footer-brand">
+                <img th:src="@{/imagenes/logoEmpresa.png}" alt="Logo PICCOLA" class="footer-logo">
+                <p class="footer-slogan">La solución rápida para un hambre inesperado</p>
+            </div>
+            
+            <div class="footer-info">
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>📍 C. Los Naranjos, Ica 11000</li>
+                        <li>📞 +51 920 248 028</li>
+                        <li>✉️ correo@piccola.com</li>
+                        <li>🕒 Lun-Dom: 7:00 p.m - 12:00 p.m</li>
+
+                    </ul>
+                </div>
+                  <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a th:href="@{/menu}">Nuestro Menú</a></li>
+                        <li><a th:href="@{/nosotros}">Sobre Nosotros</a></li>
+                        <li><a th:href="@{/contacto}">Contactanos</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-links">
+                        <a target="_blank" href="https://www.instagram.com/fcbarcelona/" aria-label="Instagram" class="social-link">
+                            <img th:src="@{/imagenes/instragram.png}" alt="Instagram">
+                        </a>
+                        <a target="_blank" href="https://www.facebook.com/fcbarcelona" aria-label="Facebook" class="social-link">
+                            <img th:src="@{/imagenes/facebook.png}" alt="Facebook">
+                        </a>
+                        <a target="_blank" href="https://www.tiktok.com/@fcbarcelona" aria-label="TikTok" class="social-link">
+                            <img th:src="@{/imagenes/tiktok.png}" alt="TikTok">
+                        </a>
+                        <a target="_blank" href="https://wa.me/51907349005" aria-label="WhatsApp" class="social-link">
+                            <img th:src="@{/imagenes/whatsapp.png}" alt="WhatsApp">
+                        </a>
+                    </div>
+                    <p class="social-text">¡Mantente conectado con nosotros!</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-payment">
+            <h4>Métodos de Pago</h4>
+            <div class="payment-methods">
+                <span class="payment-method">💳 Visa</span>
+                <span class="payment-method">💳 Mastercard</span>
+                <span class="payment-method"> <img th:src="@{/imagenes/yape.png}" alt="Yape"> Yape</span>
+                <span class="payment-method"> <img th:src="@{/imagenes/plin.png}" alt="Plin">Plin</span>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 PICCOLA. Todos los derechos reservados</p>
+            <div class="footer-legal">
+                <a target="_blank" th:href="@{/privacy}">Política de Privacidad</a>
+                <a target="_blank" th:href="@{/terms}">Términos y Condiciones</a>
+            </div>
+        </div>
+    </div>
+</footer>
+    <!-- ========= FIN DEL FOOTER ========= -->
+</body>
+</html>

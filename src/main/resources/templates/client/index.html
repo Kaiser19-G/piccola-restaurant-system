@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PICCOLA - Hamburguesería en Ica, Perú - Comida rápida deliciosa">
+    <meta name="keywords" content="hamburguesería, piccola, ica, perú, hamburguesas, salchipapas, broaster, comida rápida">
+    <title>PICCOLA - Hamburguesería en Ica</title>    
+    <!-- Rutas de recursos gestionadas por Thymeleaf -->
+    <link rel="stylesheet" th:href="@{/client/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script th:src="@{/client/js/cart.js}" defer></script>
+    <script th:src="@{/client/js/modal.js}" defer></script>
+    <script th:src="@{/client/js/carrusel.js}" defer></script>
+    
+</head>
+<body>
+
+<!-- Header (integrado) con rutas Thymeleaf -->
+<header class="header">
+    <div class="contenedor-logo-piccola">
+        <a th:href="@{/}"><img class="logo-piccola" th:src="@{/imagenes/logoEmpresa.png}" alt="Logo PICCOLA Hamburguesería"></a>
+    </div>
+    <nav class="nav">
+        <ul class="item-menus-general">
+            <li class="item-menus"><a th:href="@{/}" class="link-menus">Inicio</a></li>  
+            <li class="item-menus"><a th:href="@{/menu}" class="link-menus">Menú</a></li>
+            <li class="item-menus"><a th:href="@{/nosotros}" class="link-menus">Nosotros</a></li>
+            <li class="item-menus"><a th:href="@{/contacto}" class="link-menus">Contactos</a></li>
+        </ul>
+    </nav>
+    <div class="contenedor-botones">
+        <button id="userBtn">
+            <svg class="logo-login" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </button>
+        <button id="cartBtn">
+            <svg class="logo-carrito" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span class="header-cart-count" id="headerCartCount" style="display: none;">0</span>
+        </button>        
+    </div>
+</header>
+
+<!-- Modales -->
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeUser">×</span>
+        <div class="modal-header">
+            <h2>Iniciar Sesión</h2>
+        </div>
+        <form class="user-form" id="loginForm">
+            <!-- Contenido del formulario de login -->
+        </form>
+        <form class="user-form" id="registerForm" style="display: none;">
+            <!-- Contenido del formulario de registro -->
+        </form>
+    </div>
+</div>
+
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeCart">×</span>
+        <div class="modal-header">
+            <h2>🛒 Carrito de Compras</h2>
+        </div>
+        <div id="cartItems">
+            <div class="cart-empty"><p>Tu carrito está vacío</p></div>
+        </div>
+        <div class="cart-total">
+            <div class="total-amount">Total: S/ <span id="totalAmount">0.00</span></div>
+            <button class="btn" id="checkoutBtn" onclick="checkout()" style="margin-top: 15px; display: none;">💳 Proceder al Pago</button>
+        </div>
+    </div>
+</div>
+
+<main class="main-inicio">
+    <div class="presentacion-contenido">
+        <video autoplay muted th:src="@{/imagenes/video.mp4}"></video>
+        <div class="video-overlay">
+            <h1>🍔 Bienvenido a PICCOLA</h1>
+            <p>La hamburguesería más deliciosa de Ica</p>
+            <p class="slogan">La solución rápida para un hambre inesperado</p>
+        </div>
+    </div>
+
+    <div class="contenedor-subtitulo">
+        <h2 class="subtitulo-main">🔥 Productos Populares</h2>
+        <p class="descripcion-populares">Los favoritos de nuestros clientes en Ica</p>
+    </div>
+
+    <div class="contenedor-carrusel">
+        <button class="atras">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+
+        <div class="contenedor-productos-populares">
+            <!-- Broaster Piccola -->
+            <div class="producto-item active">
+                <div class="producto-card">
+                    <div class="producto-imagen-container">
+                        <img class="productos-populares" th:src="@{/imagenes/broaster.JPG}" alt="Broaster Piccola">
+                        <div class="producto-overlay"><span class="producto-tag">🍗 Favorito</span></div>
+                    </div>
+                    <div class="producto-info">
+                        <h3>Broaster Piccola</h3>
+                        <div class="producto-rating">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star-half">★</span>
+                        </div>
+                        <p class="descripcion-producto">Delicioso pollo broaster crujiente por fuera y jugoso por dentro, acompañado de papas fritas y salsas de la casa.</p>
+                        <div class="producto-footer">
+                            <p class="precio-producto">S/ 13.00</p>
+                            <button class="btn-quiero"><a th:href="@{/menu}">¡Lo quiero!</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mostrito Piccola -->
+            <div class="producto-item">
+                <div class="producto-card">
+                    <div class="producto-imagen-container">
+                        <img class="productos-populares" th:src="@{/imagenes/mostrito.JPG}" alt="Mostrito Piccola" loading="lazy">
+                        <div class="producto-overlay"><span class="producto-tag">🔥 Popular</span></div>
+                    </div>
+                    <div class="producto-info">
+                        <h3>Mostrito Piccola</h3>
+                        <div class="producto-rating">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                        </div>
+                        <p class="descripcion-producto">Presa + Chaufa + papas + huevo + ensalada + cremas. ¡Una combinación explosiva de sabores!</p>
+                        <div class="producto-footer">
+                            <p class="precio-producto">S/ 15.00</p>
+                            <button class="btn-quiero"><a th:href="@{/menu}">¡Lo quiero!</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hamburguesa Royal -->
+            <div class="producto-item">
+                <div class="producto-card">
+                    <div class="producto-imagen-container">
+                        <img class="productos-populares" th:src="@{/imagenes/royaleburguer.JPG}" alt="Hamburguesa Royal" loading="lazy">
+                        <div class="producto-overlay"><span class="producto-tag">👑 Premium</span></div>
+                    </div>
+                    <div class="producto-info">
+                        <h3>Hamburguesa Royal</h3>
+                        <div class="producto-rating">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star-half">★</span>
+                        </div>
+                        <p class="descripcion-producto">Carne casera + queso + jamón + huevo. Nuestra hamburguesa premium con ingredientes selectos.</p>
+                        <div class="producto-footer">
+                            <p class="precio-producto">S/ 10.00</p>
+                            <button class="btn-quiero"><a th:href="@{/menu}">¡Lo quiero!</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Salchipapa Explosiva -->
+            <div class="producto-item">
+                <div class="producto-card">
+                    <div class="producto-imagen-container">
+                        <img class="productos-populares" th:src="@{/imagenes/salchipapa.JPG}" alt="Salchipapa Explosiva" loading="lazy">
+                        <div class="producto-overlay"><span class="producto-tag">💣 Explosiva</span></div>
+                    </div>
+                    <div class="producto-info">
+                        <h3>Salchipapa Explosiva</h3>
+                        <div class="producto-rating">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                        </div>
+                        <p class="descripcion-producto">Chorizo + hot dog + huevo + queso + carne casera + jamón + piña + tocino + papas + ensalada + cremas.</p>
+                        <div class="producto-footer">
+                            <p class="precio-producto">S/ 16.00</p>
+                            <button class="btn-quiero"><a th:href="@{/menu}">¡Lo quiero!</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="adelante">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+    </div>
+
+    <div class="puntos">
+        <!-- Elementos del carrusel implementados en JS -->
+    </div>
+
+    <!-- Sección de categorías -->
+    <section class="categorias-section">
+        <h2>🍽️ Nuestras Especialidades</h2>
+        <div class="categorias-grid">
+            <div class="categoria-card">
+                <div class="categoria-icon">🧀</div>
+                <h3>Hamburguesas</h3>
+                <p>Desde S/ 5.00</p>
+                <small>10 variedades disponibles</small>
+            </div>
+            <div class="categoria-card">
+                <div class="categoria-icon">🍟</div>
+                <h3>Salchipapas</h3>
+                <p>Desde S/ 8.00</p>
+                <small>6 variedades disponibles</small>
+            </div>
+            <div class="categoria-card">
+                <div class="categoria-icon">🍗</div>
+                <h3>Broaster's</h3>
+                <p>Desde S/ 13.00</p>
+                <small>3 variedades disponibles</small>
+            </div>
+            <div class="categoria-card">
+                <div class="categoria-icon">🥤</div>
+                <h3>Bebidas</h3>
+                <p>Desde S/ 1.50</p>
+                <small>Gaseosas, jugos y más</small>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer (integrado) con rutas Thymeleaf -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-main">
+            <div class="footer-brand">
+                <img th:src="@{/imagenes/logoEmpresa.png}" alt="Logo PICCOLA" class="footer-logo">
+                <p class="footer-slogan">La solución rápida para un hambre inesperado</p>
+                <p class="footer-location">📍 Ica, Perú</p>
+            </div>
+            <div class="footer-info">
+                <div class="footer-section">
+                    <h3>📞 Contacto</h3>
+                    <ul>
+                        <li>📍 C. Los Naranjos, Ica 11000</li>
+                        <li>📞 +51 920 248 028</li>
+                        <li>✉️ correo@piccola.com</li>
+                        <li>🕒 Lun-Dom: 7:00 PM - 12:00 AM</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>🔗 Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a th:href="@{/menu}">Nuestro Menú</a></li>
+                        <li><a th:href="@{/nosotros}">Sobre Nosotros</a></li>
+                        <li><a th:href="@{/contacto}">Contáctanos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>📱 Síguenos</h3>
+                    <div class="social-links">
+                        <a target="_blank" href="https://www.instagram.com/piccolaica/" aria-label="Instagram" class="social-link">
+                            <img th:src="@{/imagenes/instragram.png}" alt="Instagram">
+                        </a>
+                        <a target="_blank" href="https://www.facebook.com/piccolaica" aria-label="Facebook" class="social-link">
+                            <img th:src="@{/imagenes/facebook.png}" alt="Facebook">
+                        </a>
+                        <a target="_blank" href="https://www.tiktok.com/@piccolaica" aria-label="TikTok" class="social-link">
+                            <img th:src="@{/imagenes/tiktok.png}" alt="TikTok">
+                        </a>
+                        <a target="_blank" href="https://wa.me/51920248028" aria-label="WhatsApp" class="social-link">
+                            <img th:src="@{/imagenes/whatsapp.png}" alt="WhatsApp">
+                        </a>
+                    </div>
+                    <p class="social-text">¡Mantente conectado con nosotros!</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-payment">
+            <h4>💳 Métodos de Pago</h4>
+            <div class="payment-methods">
+                <span class="payment-method">💳 Visa</span>
+                <span class="payment-method">💳 Mastercard</span>
+                <span class="payment-method"><img th:src="@{/imagenes/yape.png}" alt="Yape"> Yape</span>
+                <span class="payment-method"><img th:src="@{/imagenes/plin.png}" alt="Plin"> Plin</span>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 PICCOLA Hamburguesería. Todos los derechos reservados</p>
+            <div class="footer-legal">
+                <a target="_blank" href="#privacy">Política de Privacidad</a>
+                <a target="_blank" href="#terms">Términos y Condiciones</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

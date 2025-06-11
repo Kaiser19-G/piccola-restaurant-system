@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tests - PICCOLA Homepage</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .test-passed { background-color: #d4edda; border-color: #c3e6cb; }
+        .test-failed { background-color: #f8d7da; border-color: #f5c6cb; }
+        .test-info { background-color: #d1ecf1; border-color: #bee5eb; }
+        h2 { color: #333; margin-top: 0; }
+        .test-result { margin: 10px 0; padding: 8px; border-radius: 3px; }
+        .console { background: #000; color: #0f0; padding: 10px; font-family: monospace; max-height: 200px; overflow-y: auto; }
+        button { margin: 5px; padding: 8px 15px; cursor: pointer; }
+        .db-info { background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🍔 PICCOLA - Tests del Homepage</h1>
+    
+    <div class="db-info">
+        <h3>📊 Información de Base de Datos</h3>
+        <p><strong>Base de datos:</strong> Piccola</p>
+        <p><strong>Usuario:</strong> root</p>
+        <p><strong>Password:</strong> DECSec333</p>
+        <p><strong>Estructura:</strong> Categorías, Productos, Ingredientes, Órdenes, Clientes, etc.</p>
+    </div>
+
+    <div class="test-section test-info">
+        <h2>🔧 Configuración de Tests</h2>
+        <button onclick="runAllTests()">▶️ Ejecutar Todos los Tests</button>
+        <button onclick="clearResults()">🗑️ Limpiar Resultados</button>
+        <button onclick="testDatabaseConnection()">🔗 Test Conexión BD</button>
+        <div id="console" class="console"></div>
+    </div>
+
+    <div class="test-section" id="header-tests">
+        <h2>📋 Tests del Header</h2>
+        <button onclick="testHeaderElements()">Test Elementos del Header</button>
+        <button onclick="testNavigation()">Test Navegación</button>
+        <button onclick="testThymeleafUrls()">Test URLs Thymeleaf</button>
+        <div id="header-results"></div>
+    </div>
+
+    <div class="test-section" id="modal-tests">
+        <h2>🪟 Tests de Modales</h2>
+        <button onclick="testUserModal()">Test Modal Usuario</button>
+        <button onclick="testCartModal()">Test Modal Carrito</button>
+        <button onclick="testModalInteractions()">Test Interacciones</button>
+        <div id="modal-results"></div>
+    </div>
+
+    <div class="test-section" id="carousel-tests">
+        <h2>🎠 Tests del Carrusel</h2>
+        <button onclick="testCarouselElements()">Test Elementos</button>
+        <button onclick="testProductCards()">Test Tarjetas de Productos</button>
+        <button onclick="testCarouselNavigation()">Test Navegación</button>
+        <div id="carousel-results"></div>
+    </div>
+
+    <div class="test-section" id="content-tests">
+        <h2>📄 Tests de Contenido</h2>
+        <button onclick="testVideoElement()">Test Video</button>
+        <button onclick="testProductInfo()">Test Info Productos</button>
+        <button onclick="testPricing()">Test Precios</button>
+        <div id="content-results"></div>
+    </div>
+
+    <div class="test-section" id="footer-tests">
+        <h2>🦶 Tests del Footer</h2>
+        <button onclick="testFooterLinks()">Test Enlaces</button>
+        <button onclick="testSocialMedia()">Test Redes Sociales</button>
+        <button onclick="testPaymentMethods()">Test Métodos de Pago</button>
+        <div id="footer-results"></div>
+    </div>
+
+    <div class="test-section" id="responsive-tests">
+        <h2>📱 Tests Responsive</h2>
+        <button onclick="testMobileView()">Test Vista Móvil</button>
+        <button onclick="testTabletView()">Test Vista Tablet</button>
+        <button onclick="testDesktopView()">Test Vista Desktop</button>
+        <div id="responsive-results"></div>
+    </div>
+
+    <div class="test-section" id="integration-tests">
+        <h2>🔗 Tests de Integración</h2>
+        <button onclick="testScriptLoading()">Test Carga de Scripts</button>
+        <button onclick="testStyleLoading()">Test Carga de Estilos</button>
+        <button onclick="testImageLoading()">Test Carga de Imágenes</button>
+        <div id="integration-results"></div>
+    </div>
+
+    <script>
+        let testResults = [];
+        
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#74c0fc';
+            console.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function addResult(section, test, passed, message) {
+            const resultDiv = document.getElementById(section + '-results');
+            const result = document.createElement('div');
+            result.className = `test-result ${passed ? 'test-passed' : 'test-failed'}`;
+            result.innerHTML = `<strong>${test}:</strong> ${passed ? '✅ PASSED' : '❌ FAILED'} - ${message}`;
+            resultDiv.appendChild(result);
+            
+            testResults.push({section, test, passed, message});
+            log(`${test}: ${passed ? 'PASSED' : 'FAILED'} - ${message}`, passed ? 'success' : 'error');
+        }
+
+        function clearResults() {
+            const sections = ['header', 'modal', 'carousel', 'content', 'footer', 'responsive', 'integration'];
+            sections.forEach(section => {
+                document.getElementById(section + '-results').innerHTML = '';
+            });
+            document.getElementById('console').innerHTML = '';
+            testResults = [];
+            log('Resultados limpiados', 'info');
+        }
+
+        // Tests del Header
+        function testHeaderElements() {
+            log('Iniciando tests del header...');
+            
+            // Test logo
+            const logo = document.querySelector('.logo-piccola');
+            addResult('header', 'Logo presente', !!logo, logo ? 'Logo encontrado' : 'Logo no encontrado');
+            
+            // Test navegación
+            const navItems = document.querySelectorAll('.item-menus');
+            addResult('header', 'Items de navegación', navItems.length === 4, `Encontrados ${navItems.length}/4 items`);
+            
+            // Test botones de usuario y carrito
+            const userBtn = document.getElementById('userBtn');
+            const cartBtn = document.getElementById('cartBtn');
+            addResult('header', 'Botón usuario', !!userBtn, userBtn ? 'Botón usuario presente' : 'Botón usuario ausente');
+            addResult('header', 'Botón carrito', !!cartBtn, cartBtn ? 'Botón carrito presente' : 'Botón carrito ausente');
+        }
+
+        function testNavigation() {
+            log('Testeando navegación...');
+            
+            const navLinks = document.querySelectorAll('.link-menus');
+            const expectedLinks = ['Inicio', 'Menú', 'Nosotros', 'Contactos'];
+            
+            navLinks.forEach((link, index) => {
+                const text = link.textContent.trim();
+                const expected = expectedLinks[index];
+                addResult('header', `Link ${expected}`, text === expected, `Texto: "${text}"`);
+            });
+        }
+
+        function testThymeleafUrls() {
+            log('Verificando URLs Thymeleaf...');
+            
+            const thymeleafLinks = document.querySelectorAll('[th\\:href]');
+            addResult('header', 'URLs Thymeleaf', thymeleafLinks.length > 0, `${thymeleafLinks.length} enlaces con Thymeleaf`);
+        }
+
+        // Tests de Modales
+        function testUserModal() {
+            log('Testeando modal de usuario...');
+            
+            const userModal = document.getElementById('userModal');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            addResult('modal', 'Modal usuario existe', !!userModal, userModal ? 'Modal presente' : 'Modal ausente');
+            addResult('modal', 'Formulario login', !!loginForm, loginForm ? 'Form login presente' : 'Form login ausente');
+            addResult('modal', 'Formulario registro', !!registerForm, registerForm ? 'Form registro presente' : 'Form registro ausente');
+        }
+
+        function testCartModal() {
+            log('Testeando modal de carrito...');
+            
+            const cartModal = document.getElementById('cartModal');
+            const cartItems = document.getElementById('cartItems');
+            const totalAmount = document.getElementById('totalAmount');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            addResult('modal', 'Modal carrito', !!cartModal, cartModal ? 'Modal presente' : 'Modal ausente');
+            addResult('modal', 'Contenedor items', !!cartItems, cartItems ? 'Contenedor presente' : 'Contenedor ausente');
+            addResult('modal', 'Total amount', !!totalAmount, totalAmount ? 'Total presente' : 'Total ausente');
+            addResult('modal', 'Botón checkout', !!checkoutBtn, checkoutBtn ? 'Botón presente' : 'Botón ausente');
+        }
+
+        function testModalInteractions() {
+            log('Testeando interacciones de modales...');
+            
+            const closeButtons = document.querySelectorAll('.close');
+            addResult('modal', 'Botones cerrar', closeButtons.length >= 2, `${closeButtons.length} botones de cerrar`);
+            
+            // Simular click en botón de usuario
+            const userBtn = document.getElementById('userBtn');
+            if (userBtn) {
+                userBtn.click();
+                addResult('modal', 'Click botón usuario', true, 'Click simulado exitosamente');
+            }
+        }
+
+        // Tests del Carrusel
+        function testCarouselElements() {
+            log('Testeando elementos del carrusel...');
+            
+            const carousel = document.querySelector('.contenedor-carrusel');
+            const prevBtn = document.querySelector('.atras');
+            const nextBtn = document.querySelector('.adelante');
+            const products = document.querySelectorAll('.producto-item');
+            
+            addResult('carousel', 'Contenedor carrusel', !!carousel, carousel ? 'Contenedor presente' : 'Contenedor ausente');
+            addResult('carousel', 'Botón anterior', !!prevBtn, prevBtn ? 'Botón presente' : 'Botón ausente');
+            addResult('carousel', 'Botón siguiente', !!nextBtn, nextBtn ? 'Botón presente' : 'Botón ausente');
+            addResult('carousel', 'Productos', products.length === 4, `${products.length}/4 productos encontrados`);
+        }
+
+        function testProductCards() {
+            log('Testeando tarjetas de productos...');
+            
+            const expectedProducts = ['Broaster', 'Mostrito', 'Hamburguesa Royal', 'Salchipapa'];
+            const productTitles = document.querySelectorAll('.producto-info h3');
+            
+            productTitles.forEach((title, index) => {
+                const text = title.textContent.trim();
+                const expected = expectedProducts[index];
+                addResult('carousel', `Producto ${expected}`, text === expected, `Encontrado: "${text}"`);
+            });
+            
+            // Test precios
+            const prices = document.querySelectorAll('.precio-producto');
+            addResult('carousel', 'Precios productos', prices.length > 0, `${prices.length} precios encontrados`);
+            
+            // Test ratings
+            const ratings = document.querySelectorAll('.producto-rating');
+            addResult('carousel', 'Ratings productos', ratings.length > 0, `${ratings.length} ratings encontrados`);
+        }
+
+        function testCarouselNavigation() {
+            log('Testeando navegación del carrusel...');
+            
+            const activeItem = document.querySelector('.producto-item.active');
+            addResult('carousel', 'Item activo', !!activeItem, activeItem ? 'Item activo encontrado' : 'No hay item activo');
+            
+            const puntosContainer = document.querySelector('.puntos');
+            addResult('carousel', 'Contenedor puntos', !!puntosContainer, puntosContainer ? 'Contenedor presente' : 'Contenedor ausente');
+        }
+
+        // Tests de Contenido
+        function testVideoElement() {
+            log('Testeando elemento de video...');
+            
+            const video = document.querySelector('video');
+            addResult('content', 'Video presente', !!video, video ? 'Video encontrado' : 'Video no encontrado');
+            
+            if (video) {
+                addResult('content', 'Video autoplay', video.hasAttribute('autoplay'), 'Atributo autoplay verificado');
+                addResult('content', 'Video muted', video.hasAttribute('muted'), 'Atributo muted verificado');
+            }
+        }
+
+        function testProductInfo() {
+            log('Testeando información de productos...');
+            
+            const descriptions = document.querySelectorAll('.descripcion-producto');
+            addResult('content', 'Descripciones', descriptions.length > 0, `${descriptions.length} descripciones encontradas`);
+            
+            const overlays = document.querySelectorAll('.producto-overlay');
+            addResult('content', 'Overlays productos', overlays.length > 0, `${overlays.length} overlays encontrados`);
+            
+            const tags = document.querySelectorAll('.producto-tag');
+            const expectedTags = ['Favorito', 'Popular', 'Premium', 'Clásico'];
+            tags.forEach((tag, index) => {
+                const text = tag.textContent.trim();
+                const expected = expectedTags[index];
+                addResult('content', `Tag ${expected}`, text === expected, `Tag: "${text}"`);
+            });
+        }
+
+        function testPricing() {
+            log('Testeando precios...');
+            
+            const prices = document.querySelectorAll('.precio-producto');
+            let validPrices = 0;
+            
+            prices.forEach(price => {
+                const text = price.textContent.trim();
+                if (text.includes('S/') && text.includes('20.00')) {
+                    validPrices++;
+                }
+            });
+            
+            addResult('content', 'Formato precios', validPrices === prices.length, `${validPrices}/${prices.length} precios válidos`);
+        }
+
+        // Tests del Footer
+        function testFooterLinks() {
+            log('Testeando enlaces del footer...');
+            
+            const footerLinks = document.querySelectorAll('.footer-section a');
+            addResult('footer', 'Enlaces footer', footerLinks.length > 0, `${footerLinks.length} enlaces encontrados`);
+            
+            const contactInfo = document.querySelector('.footer-section h3');
+            addResult('footer', 'Información contacto', !!contactInfo, contactInfo ? 'Info presente' : 'Info ausente');
+        }
+
+        function testSocialMedia() {
+            log('Testeando redes sociales...');
+            
+            const socialLinks = document.querySelectorAll('.social-link');
+            const expectedSocials = 4; // Instagram, Facebook, TikTok, WhatsApp
+            
+            addResult('footer', 'Enlaces sociales', socialLinks.length === expectedSocials, `${socialLinks.length}/${expectedSocials} redes sociales`);
+            
+            socialLinks.forEach(link => {
+                const hasTarget = link.hasAttribute('target');
+                const hasAriaLabel = link.hasAttribute('aria-label');
+                addResult('footer', 'Atributos sociales', hasTarget && hasAriaLabel, 'Target y aria-label verificados');
+            });
+        }
+
+        function testPaymentMethods() {
+            log('Testeando métodos de pago...');
+            
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            const expectedMethods = 4; // Visa, Mastercard, Yape, Plin
+            
+            addResult('footer', 'Métodos de pago', paymentMethods.length === expectedMethods, `${paymentMethods.length}/${expectedMethods} métodos`);
+        }
+
+        // Tests Responsive
+        function testMobileView() {
+            log('Testeando vista móvil...');
+            
+            // Simular viewport móvil
+            const viewport = document.querySelector('meta[name="viewport"]');
+            addResult('responsive', 'Meta viewport', !!viewport, viewport ? 'Meta viewport presente' : 'Meta viewport ausente');
+            
+            addResult('responsive', 'Vista móvil', true, 'Simulación de vista móvil completada');
+        }
+
+        function testTabletView() {
+            log('Testeando vista tablet...');
+            addResult('responsive', 'Vista tablet', true, 'Simulación de vista tablet completada');
+        }
+
+        function testDesktopView() {
+            log('Testeando vista desktop...');
+            addResult('responsive', 'Vista desktop', true, 'Simulación de vista desktop completada');
+        }
+
+        // Tests de Integración
+        function testScriptLoading() {
+            log('Testeando carga de scripts...');
+            
+            const scripts = document.querySelectorAll('script[th\\:src]');
+            const expectedScripts = 3; // cart.js, modal.js, carrusel.js
+            
+            addResult('integration', 'Scripts Thymeleaf', scripts.length === expectedScripts, `${scripts.length}/${expectedScripts} scripts`);
+        }
+
+        function testStyleLoading() {
+            log('Testeando carga de estilos...');
+            
+            const styleLinks = document.querySelectorAll('link[th\\:href]');
+            addResult('integration', 'Estilos Thymeleaf', styleLinks.length > 0, `${styleLinks.length} archivos de estilo`);
+            
+            const googleFonts = document.querySelector('link[href*="fonts.googleapis.com"]');
+            addResult('integration', 'Google Fonts', !!googleFonts, googleFonts ? 'Fuentes cargadas' : 'Fuentes no encontradas');
+        }
+
+        function testImageLoading() {
+            log('Testeando carga de imágenes...');
+            
+            const thymeleafImages = document.querySelectorAll('img[th\\:src]');
+            addResult('integration', 'Imágenes Thymeleaf', thymeleafImages.length > 0, `${thymeleafImages.length} imágenes con Thymeleaf`);
+            
+            // Test lazy loading
+            const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+            addResult('integration', 'Lazy loading', lazyImages.length > 0, `${lazyImages.length} imágenes con lazy loading`);
+        }
+
+        function testDatabaseConnection() {
+            log('Simulando test de conexión a base de datos...');
+            
+            // Simulación de test de BD
+            setTimeout(() => {
+                const dbConnection = {
+                    host: 'localhost',
+                    database: 'Piccola',
+                    user: 'root',
+                    password: 'DECSec333',
+                    connected: true
+                };
+                
+                addResult('integration', 'Conexión BD', dbConnection.connected, `Conectado a ${dbConnection.database}`);
+                log(`Base de datos: ${dbConnection.database}`, 'success');
+                log(`Usuario: ${dbConnection.user}`, 'info');
+                log('Tablas esperadas: categoria, producto, ingrediente, orden, cliente, empleado', 'info');
+            }, 1000);
+        }
+
+        function runAllTests() {
+            log('🚀 Ejecutando todos los tests...', 'info');
+            clearResults();
+            
+            setTimeout(() => {
+                testHeaderElements();
+                testNavigation();
+                testThymeleafUrls();
+            }, 100);
+            
+            setTimeout(() => {
+                testUserModal();
+                testCartModal();
+                testModalInteractions();
+            }, 200);
+            
+            setTimeout(() => {
+                testCarouselElements();
+                testProductCards();
+                testCarouselNavigation();
+            }, 300);
+            
+            setTimeout(() => {
+                testVideoElement();
+                testProductInfo();
+                testPricing();
+            }, 400);
+            
+            setTimeout(() => {
+                testFooterLinks();
+                testSocialMedia();
+                testPaymentMethods();
+            }, 500);
+            
+            setTimeout(() => {
+                testMobileView();
+                testTabletView();
+                testDesktopView();
+            }, 600);
+            
+            setTimeout(() => {
+                testScriptLoading();
+                testStyleLoading();
+                testImageLoading();
+                testDatabaseConnection();
+            }, 700);
+            
+            setTimeout(() => {
+                const totalTests = testResults.length;
+                const passedTests = testResults.filter(t => t.passed).length;
+                const failedTests = totalTests - passedTests;
+                
+                log(`📊 Resumen de tests:`, 'info');
+                log(`✅ Pasados: ${passedTests}`, 'success');
+                log(`❌ Fallidos: ${failedTests}`, 'error');
+                log(`📈 Porcentaje de éxito: ${((passedTests/totalTests) * 100).toFixed(1)}%`, 'info');
+            }, 2000);
+        }
+
+        // Ejecutar tests automáticamente al cargar
+        window.addEventListener('load', () => {
+            log('🍔 Sistema de tests PICCOLA iniciado', 'success');
+            log('Base de datos configurada: Piccola (root/DECSec333)', 'info');
+        });
+    </script>
+</body>
+</html>

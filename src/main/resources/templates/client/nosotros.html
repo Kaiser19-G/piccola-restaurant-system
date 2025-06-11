@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PICCOLA</title>    <link rel="stylesheet" th:href="@{/client/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script th:src="@{/client/js/modal.js}"></script>
+</head>
+<body>
+    <!--Encabezado para todas las paginas-->
+    <header class="header">        <div class="contenedor-logo-piccola">
+            <a th:href="@{/}"><img class="logo-piccola" th:src="@{/imagenes/logoEmpresa.png}" alt="Logo Piccola"></a>
+        </div>        <nav class="nav">
+            <ul class="item-menus-general">
+
+                <li class="item-menus">
+                    <a th:href="@{/}" class="link-menus">Inicio</a>
+                </li>
+
+                <li class="item-menus">
+                    <a th:href="@{/menu}" class="link-menus">Menú</a>
+                </li>
+
+                <li class="item-menus">
+                    <a th:href="@{/nosotros}" class="link-menus">Nosotros</a>
+                </li>
+
+                <li class="item-menus">
+                    <a th:href="@{/contacto}" class="link-menus">Contactos</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="contenedor-botones">
+            <button id="userBtn">
+                <svg class="logo-login" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </button>
+            <button id="cartBtn">
+                <svg class="logo-carrito" viewBox="0 0 24 24">
+                    <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Modal de Usuario -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeUser">×</span>
+            <div class="modal-header">
+                <h2>Iniciar Sesión</h2>
+            </div>
+            <form class="user-form" id="loginForm" th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">Iniciar Sesión</button>
+                <button type="button" class="btn btn-secondary" id="showRegister">¿No tienes cuenta? Regístrate</button>
+            </form>
+
+            <form class="user-form" id="registerForm" style="display: none;" th:action="@{/register}" method="post">
+                <div class="form-group">
+                    <label for="regName">Nombre Completo:</label>
+                    <input type="text" id="regName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Correo Electrónico:</label>
+                    <input type="email" id="regEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Contraseña:</label>
+                    <input type="password" id="regPassword" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Contraseña:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn">Registrarse</button>
+                <button type="button" class="btn btn-secondary" id="showLogin">¿Ya tienes cuenta? Inicia Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Carrito -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeCart">×</span>
+            <div class="modal-header">
+                <h2>Carrito de Compras</h2>
+            </div>
+            <div id="cartItems">
+                <!-- Los items del carrito se mostrarán aquí (posiblemente con th:each) -->
+            </div>
+            <div class="cart-total">
+                <div class="total-amount">Total: $<span id="totalAmount" th:text="${totalAmount != null ? #numbers.formatDecimal(totalAmount, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</span></div>
+                <button class="btn" id="checkoutBtn" style="margin-top: 15px;">Proceder al Pago</button>
+            </div>
+        </div>
+    </div>
+    <!--Encabezado para todas las paginas-->
+
+    <!--main-->
+    <main class="main-nosotros">
+        <div class="contenedor-nosotros">
+            <h2>Quienes somos</h2>
+            <img th:src="@{/imagenes/equipo.png}" alt="Equipo Piccola">
+            <p class="descripcion">Hace algunos años, en el corazón de Ica, nació una idea sencilla pero poderosa:
+                crear un lugar donde cada hamburguesa contara una historia. Así fue como nació
+                Piccola, una pequeña hamburguesería que comenzó con una parrilla casera, una
+                receta familiar y un sueño grande. Inspirados por los sabores auténticos y el
+                amor por la buena comida, decidimos romper con lo tradicional y apostar por lo
+                artesanal. Desde el primer día, nuestra meta fue clara: que cada persona que
+                probara una hamburguesa Piccola sintiera que estaba saboreando algo especial,
+                algo hecho con pasión. Con esfuerzo, creatividad y mucho corazón, Piccola fue
+                creciendo. Pasamos de atender a los amigos del barrio a convertirnos en el lugar
+                favorito de muchas familias y jóvenes que buscaban más que solo una comida rápida:
+                querían sabor, experiencia y cercanía. Hoy, Piccola sigue fiel a sus raíces: somos
+                una hamburguesería con alma, donde cada detalle importa, donde el pan es tostado
+                justo a tiempo, la carne es jugosa y bien sazonada, y cada ingrediente tiene un propósito.
+                No buscamos ser los más grandes, sino los más auténticos. Porque para nosotros,
+                lo pequeño no significa poco. Significa hecho con amor.</p>
+        </div>
+        <div class="contenedor-general-mision-vision">
+            <div class="contenedor-mv">
+                <h2>Misión y Visión</h2>
+                <p class="descripcion">Para comprender mejor el propósito y la dirección de nuestra organización, es
+                fundamental conocer dos elementos clave que guían todas nuestras acciones:
+                la visión y la misión. Estos enunciados no solo reflejan lo que somos y hacia
+                dónde queremos ir, sino que también inspiran y alinean nuestros esfuerzos diarios.</p>
+            </div>
+            <div class="contenedor-info-mv">
+                <div class="contenedor-mision">
+                    <h3>Misión</h3>
+                    <p class="descripcion">Nuestra misión en Piccola es brindar experiencias gastronómicas memorables a
+                        través de hamburguesas artesanales elaboradas con ingredientes frescos, de
+                        alta calidad y preparados con dedicación. Buscamos satisfacer a nuestros
+                        clientes no solo con el sabor, sino también con un servicio cálido, rápido
+                        y auténtico, en un ambiente acogedor que invite a compartir momentos especiales.
+                        Nos comprometemos con la excelencia, la innovación y la responsabilidad, promoviendo
+                        el desarrollo local y cuidando cada detalle para que cada visita a Piccola supere las
+                        expectativas.</p>
+                </div>
+                <div class="contenedor-vision">
+                    <h3>Visión</h3>
+                    <p class="descripcion"> Nuestra visión es consolidarnos como la hamburguesería de referencia en Ica y expandirnos
+                        a nivel regional y nacional, destacando por la calidad de nuestros productos, el amor por
+                        lo que hacemos y una propuesta única que combine tradición e innovación. Aspiramos a ser
+                        una marca reconocida por el compromiso con nuestros clientes, el desarrollo sostenible,
+                        la mejora continua y el impacto positivo en la comunidad, siendo líderes en el sector
+                        gastronómico por nuestro estilo, sabor y pasión por crear experiencias.</p>
+                </div>
+            </div>
+        </div>
+        <div class="contenedor-valores">
+            <h2>Nuestro Valores</h2>
+            <p class="descripcion">Finalmente, en nuestro restaurante no solo cocinamos, también ponemos el alma en cada detalle.
+                Lo que nos mueve va más allá del sabor, con esos valores que nos definen y que están presentes
+                desde la cocina hasta tu mesa:</p>
+            <div class="contenedor-items-valores">
+                    <h4 class="item-valores">✅Calidad en cada ingrediente</h4>
+                    <h4 class="item-valores">🍔Pasión por la cocina artesanal</h4>
+                    <h4 class="item-valores">🤝Atención cálida y rápida</h4>
+                    <h4 class="item-valores">🌱Compromiso con nuestros clientes y el medio ambiente</h4>
+            </div>
+        </div>
+
+    </main>
+    <!--main-->
+
+
+
+    <!--footer para todas las paginas-->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <img th:src="@{/imagenes/logoEmpresa.png}" alt="Logo PICCOLA" class="footer-logo">
+                    <p class="footer-slogan">La solución rápida para un hambre inesperado</p>
+                </div>
+
+                <div class="footer-info">
+                    <div class="footer-section">
+                        <h3>Contacto</h3>
+                        <ul>
+                            <li>📍 C. Los Naranjos, Ica 11000</li>
+                            <li>📞 +51 920 248 028</li>
+                            <li>✉️ correo@piccola.com</li>
+                            <li>🕒 Lun-Dom: 7:00 p.m - 12:00 p.m</li>
+
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Enlaces Rápidos</h3>
+                        <ul>
+                            <li><a th:href="@{/menu.html}">Nuestro Menú</a></li>
+                            <li><a th:href="@{/nosotros.html}">Sobre Nosotros</a></li>
+                            <li><a th:href="@{/contacto.html}">Contactanos</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Síguenos</h3>
+                        <div class="social-links">
+                            <a target="_blank" href="https://www.instagram.com/fcbarcelona/" aria-label="Instagram" class="social-link">
+                                <img th:src="@{/imagenes/instragram.png}" alt="Instagram">
+                            </a>
+                            <a target="_blank" href="https://www.facebook.com/fcbarcelona" aria-label="Facebook" class="social-link">
+                                <img th:src="@{/imagenes/facebook.png}" alt="Facebook">
+                            </a>
+                            <a target="_blank" href="https://www.tiktok.com/@fcbarcelona" aria-label="TikTok" class="social-link">
+                                <img th:src="@{/imagenes/tiktok.png}" alt="TikTok">
+                            </a>
+                            <a target="_blank" href="https://wa.me/51907349005" aria-label="WhatsApp" class="social-link">
+                                <img th:src="@{/imagenes/whatsapp.png}" alt="WhatsApp">
+                            </a>
+                        </div>
+                        <p class="social-text">¡Mantente conectado con nosotros!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-payment">
+                <h4>Métodos de Pago</h4>
+                <div class="payment-methods">
+                    <span class="payment-method">💳 Visa</span>
+                    <span class="payment-method">💳 Mastercard</span>
+                    <span class="payment-method"> <img th:src="@{/imagenes/yape.png}" alt="Yape"> Yape</span>
+                    <span class="payment-method"> <img th:src="@{/imagenes/plin.png}" alt="Plin">Plin</span>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 PICCOLA. Todos los derechos reservados</p>
+                <div class="footer-legal">
+                    <a target="_blank" th:href="@{/privacy}">Política de Privacidad</a>
+                    <a target="_blank" th:href="@{/terms}">Términos y Condiciones</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--footer para todas las paginas-->
+</body>
+</html>

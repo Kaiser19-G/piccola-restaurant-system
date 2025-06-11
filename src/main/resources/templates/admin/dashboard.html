@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PICCOLA Admin</title>
+    <link rel="stylesheet" th:href="@{/admin/css/admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="admin-logo">
+            <i class="fas fa-hamburger"></i>
+            PICCOLA Admin
+        </div>
+          <nav class="admin-nav">
+            <a th:href="@{/admin/dashboard}" class="active">Dashboard</a>
+            <a th:href="@{/admin/orders}">Órdenes</a>
+            <a th:href="@{/admin/products}">Productos</a>
+            <a th:href="@{/admin/reports}">Reportes</a>
+            
+            <div class="admin-user-menu">
+                <button class="admin-user-btn">
+                    <i class="fas fa-user"></i>
+                    <span th:text="${usuario.nombre}">Admin</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>                <div class="admin-user-dropdown">
+                    <a th:href="@{/admin/profile}">Mi Perfil</a>
+                    <a href="/admin/settings">Configuración</a>
+                    <hr>
+                    <a href="/logout">Cerrar Sesión</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <ul class="admin-sidebar-menu">
+            <li>
+                <a href="/admin/dashboard" class="active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/admin/orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    Órdenes
+                    <span class="badge" th:text="${pendingOrders}">5</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/products">
+                    <i class="fas fa-hamburger"></i>
+                    Productos
+                </a>
+            </li>
+            <li>
+                <a href="/admin/categories">
+                    <i class="fas fa-tags"></i>
+                    Categorías
+                </a>
+            </li>
+            <li>
+                <a href="/admin/users">
+                    <i class="fas fa-users"></i>
+                    Usuarios
+                </a>
+            </li>
+            <li>
+                <a href="/admin/promotions">
+                    <i class="fas fa-percentage"></i>
+                    Promociones
+                </a>
+            </li>
+            <li>
+                <a href="/admin/reports">
+                    <i class="fas fa-chart-bar"></i>
+                    Reportes
+                </a>
+            </li>
+            <li>
+                <a href="/admin/settings">
+                    <i class="fas fa-cog"></i>
+                    Configuración
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="admin-page-header">
+            <h1 class="admin-page-title">Dashboard</h1>
+            <p class="admin-page-subtitle">Resumen general del restaurante</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="admin-stats-grid">
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon primary">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="admin-stat-content">
+                    <h3 th:text="${stats.ordenesHoy}">24</h3>
+                    <p>Órdenes Hoy</p>
+                </div>
+            </div>
+            
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon success">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="admin-stat-content">
+                    <h3 th:text="'S/ ' + ${stats.ventasHoy}">S/ 1,250</h3>
+                    <p>Ventas Hoy</p>
+                </div>
+            </div>
+            
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="admin-stat-content">
+                    <h3 th:text="${stats.ordenesPendientes}">8</h3>
+                    <p>Órdenes Pendientes</p>
+                </div>
+            </div>
+            
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon danger">
+                    <i class="fas fa-hamburger"></i>
+                </div>
+                <div class="admin-stat-content">
+                    <h3 th:text="${stats.productosVendidos}">156</h3>
+                    <p>Productos Vendidos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">Ventas de los Últimos 6 Meses</h3>
+                </div>
+                <div class="admin-card-body">
+                    <canvas id="salesChart" height="300"></canvas>
+                </div>
+            </div>
+            
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">Estado de Órdenes</h3>
+                </div>
+                <div class="admin-card-body">
+                    <canvas id="ordersChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">Órdenes Recientes</h3>
+                <a href="/admin/orders" class="admin-btn admin-btn-primary admin-btn-sm">
+                    Ver Todas
+                </a>
+            </div>
+            <div class="admin-card-body">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Orden</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="orden : ${ordenesRecientes}">
+                                <td th:text="${orden.numeroOrden}">PIC240101001</td>
+                                <td th:text="${orden.nombreCliente}">Juan Pérez</td>
+                                <td th:text="'S/ ' + ${orden.total}">S/ 45.50</td>
+                                <td>
+                                    <span class="badge" 
+                                          th:class="'badge-' + ${orden.estado.toLowerCase()}"
+                                          th:text="${orden.estado}">PENDIENTE</span>
+                                </td>
+                                <td th:text="${#temporals.format(orden.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/06/2024 14:30</td>
+                                <td>
+                                    <a th:href="@{/admin/orders/{id}(id=${orden.id})}" 
+                                       class="admin-btn admin-btn-sm admin-btn-outline">
+                                        Ver
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Products -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">Productos Más Vendidos</h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Vendidos</th>
+                                <th>Ingresos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="producto : ${productosPopulares}">
+                                <td th:text="${producto.nombre}">Hamburguesa Clásica</td>
+                                <td th:text="${producto.categoria.nombre}">Hamburguesas</td>
+                                <td th:text="${producto.cantidadVendida}">45</td>
+                                <td th:text="'S/ ' + ${producto.ingresoTotal}">S/ 675.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/admin/js/admin.js}"></script>
+</body>
+</html>

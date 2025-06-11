@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - PICCOLA</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/client/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/client/css/header.css}">
+    <link rel="stylesheet" th:href="@{/client/css/footer.css}">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="contenedor-logo-piccola">
+            <a th:href="@{/}"><img class="logo-piccola" th:src="@{/imagenes/logoEmpresa.png}" alt="PICCOLA Logo"></a>
+        </div>
+        <nav class="nav">
+            <ul class="item-menus-general">
+                <li class="item-menus">
+                    <a th:href="@{/}" class="links-menu">Inicio</a>
+                </li>
+                <li class="item-menus">
+                    <a th:href="@{/menu}" class="links-menu">Menú</a>
+                </li>
+                <li class="item-menus">
+                    <a th:href="@{/carrito}" class="links-menu">
+                        <i class="bi bi-arrow-left"></i> Volver al Carrito
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="bi bi-credit-card"></i> Finalizar Pedido
+                </h2>
+            </div>
+        </div>
+
+        <form id="checkoutForm">
+            <div class="row">
+                <!-- Customer Information -->
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="bi bi-person"></i> Información del Cliente
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="customerName" class="form-label">Nombre Completo *</label>
+                                    <input type="text" class="form-control" id="customerName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="customerPhone" class="form-label">Teléfono *</label>
+                                    <input type="tel" class="form-control" id="customerPhone" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="customerEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="customerEmail">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Information -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="bi bi-geo-alt"></i> Información de Entrega
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="deliveryAddress" class="form-label">Dirección de Entrega *</label>
+                                <textarea class="form-control" id="deliveryAddress" rows="3" 
+                                          placeholder="Ingresa tu dirección completa con referencias" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="deliveryDistrict" class="form-label">Distrito</label>
+                                    <select class="form-select" id="deliveryDistrict">
+                                        <option value="ica">Ica</option>
+                                        <option value="la-tinguina">La Tinguiña</option>
+                                        <option value="los-aquijes">Los Aquijes</option>
+                                        <option value="pachacutec">Pachacútec</option>
+                                        <option value="pueblo-nuevo">Pueblo Nuevo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="deliveryTime" class="form-label">Hora Preferida</label>
+                                    <select class="form-select" id="deliveryTime">
+                                        <option value="lo-antes-posible">Lo antes posible</option>
+                                        <option value="12:00-13:00">12:00 - 13:00</option>
+                                        <option value="13:00-14:00">13:00 - 14:00</option>
+                                        <option value="14:00-15:00">14:00 - 15:00</option>
+                                        <option value="19:00-20:00">19:00 - 20:00</option>
+                                        <option value="20:00-21:00">20:00 - 21:00</option>
+                                        <option value="21:00-22:00">21:00 - 22:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="bi bi-credit-card"></i> Método de Pago
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" 
+                                               id="paymentCash" value="EFECTIVO" checked>
+                                        <label class="form-check-label" for="paymentCash">
+                                            <i class="bi bi-cash"></i> Efectivo
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" 
+                                               id="paymentYape" value="YAPE">
+                                        <label class="form-check-label" for="paymentYape">
+                                            <img th:src="@{/imagenes/yape.png}" alt="Yape" style="height: 20px;"> Yape
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" 
+                                               id="paymentPlin" value="PLIN">
+                                        <label class="form-check-label" for="paymentPlin">
+                                            <img th:src="@{/imagenes/plin.png}" alt="Plin" style="height: 20px;"> Plin
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="cashAmount" class="mt-3">
+                                <label for="cashAmountInput" class="form-label">¿Con cuánto vas a pagar?</label>
+                                <input type="number" class="form-control" id="cashAmountInput" 
+                                       placeholder="Monto en efectivo" step="0.50" min="0">
+                                <div class="form-text">Para facilitar el cambio</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="bi bi-chat-text"></i> Notas Adicionales
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <textarea class="form-control" id="orderNotes" rows="3" 
+                                      placeholder="Instrucciones especiales para tu pedido (opcional)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Resumen del Pedido</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Order Items -->
+                            <div id="orderItems" class="mb-3">
+                                <!-- Items will be loaded here -->
+                            </div>
+                            
+                            <hr>
+                            
+                            <!-- Pricing -->
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">S/ 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Delivery:</span>
+                                <span id="delivery">S/ 5.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-3">
+                                <strong>Total:</strong>
+                                <strong id="total">S/ 0.00</strong>
+                            </div>
+                            
+                            <!-- Order Button -->
+                            <button type="submit" class="btn btn-success w-100 mb-3">
+                                <i class="bi bi-check-circle"></i> Confirmar Pedido
+                            </button>
+                            
+                            <a th:href="@{/carrito}" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-arrow-left"></i> Volver al Carrito
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Delivery Info -->
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5><i class="bi bi-info-circle"></i> Información Importante</h5>
+                            <ul class="list-unstyled mb-0 small">
+                                <li><i class="bi bi-clock"></i> Tiempo estimado: 30-45 min</li>
+                                <li><i class="bi bi-truck"></i> Delivery gratuito desde S/ 25</li>
+                                <li><i class="bi bi-shield-check"></i> Pago seguro</li>
+                                <li><i class="bi bi-telephone"></i> Te contactaremos para confirmar</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="contenedor-footer">
+            <div class="contenido-footer">
+                <div class="seccion-footer">
+                    <h3>PICCOLA</h3>
+                    <p>La mejor hamburguesería de Ica</p>
+                </div>
+                <div class="seccion-footer">
+                    <h4>Contacto</h4>
+                    <p><i class="bi bi-geo-alt"></i> Ica, Perú</p>
+                    <p><i class="bi bi-phone"></i> +51 123 456 789</p>
+                    <p><i class="bi bi-envelope"></i> info@piccola.pe</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/client/js/cart.js}"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderSummary();
+            setupPaymentMethodToggle();
+            setupForm();
+            
+            // Redirect if cart is empty
+            const cart = getCart();
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío');
+                window.location.href = '/menu';
+                return;
+            }
+        });
+
+        function loadOrderSummary() {
+            const cart = getCart();
+            const orderItemsContainer = document.getElementById('orderItems');
+            
+            orderItemsContainer.innerHTML = '';
+            
+            cart.forEach(item => {
+                const itemHtml = `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <small class="text-muted">${item.cantidad}x</small>
+                            <span class="ms-1">${item.nombre}</span>
+                        </div>
+                        <span>S/ ${(item.precio * item.cantidad).toFixed(2)}</span>
+                    </div>
+                `;
+                orderItemsContainer.innerHTML += itemHtml;
+            });
+            
+            // Update totals
+            const subtotal = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const delivery = subtotal >= 25 ? 0 : 5.00;
+            const total = subtotal + delivery;
+            
+            document.getElementById('subtotal').textContent = `S/ ${subtotal.toFixed(2)}`;
+            document.getElementById('delivery').textContent = delivery === 0 ? 'GRATIS' : `S/ ${delivery.toFixed(2)}`;
+            document.getElementById('total').textContent = `S/ ${total.toFixed(2)}`;
+        }
+
+        function setupPaymentMethodToggle() {
+            const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+            const cashAmountDiv = document.getElementById('cashAmount');
+            
+            paymentMethods.forEach(method => {
+                method.addEventListener('change', function() {
+                    if (this.value === 'EFECTIVO') {
+                        cashAmountDiv.style.display = 'block';
+                    } else {
+                        cashAmountDiv.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        function setupForm() {
+            const form = document.getElementById('checkoutForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!validateForm()) {
+                    return;
+                }
+                
+                submitOrder();
+            });
+        }
+
+        function validateForm() {
+            const requiredFields = [
+                'customerName',
+                'customerPhone',
+                'deliveryAddress'
+            ];
+            
+            let isValid = true;
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                alert('Por favor completa todos los campos obligatorios');
+            }
+            
+            return isValid;
+        }
+
+        function submitOrder() {
+            const cart = getCart();
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            const orderData = {
+                items: cart.map(item => ({
+                    productoId: item.id,
+                    cantidad: item.cantidad,
+                    notas: null
+                })),
+                direccionEntrega: document.getElementById('deliveryAddress').value,
+                telefonoContacto: document.getElementById('customerPhone').value,
+                metodoPago: paymentMethod,
+                notas: document.getElementById('orderNotes').value || null
+            };
+            
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Procesando...';
+            submitBtn.disabled = true;
+            
+            // Submit order
+            fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Clear cart
+                    localStorage.removeItem('cart');
+                    
+                    // Redirect to confirmation page
+                    window.location.href = `/confirmacion/${data.orderId}`;
+                } else {
+                    throw new Error(data.message || 'Error al procesar el pedido');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting order:', error);
+                alert('Error al procesar el pedido. Por favor intenta nuevamente.');
+                
+                // Restore button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        }
+
+        // Cart utility functions
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart') || '[]');
+        }
+    </script>
+</body>
+</html>

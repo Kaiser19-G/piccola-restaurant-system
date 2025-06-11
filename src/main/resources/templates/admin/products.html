@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - PICCOLA Admin</title>
+    <link rel="stylesheet" th:href="@{/admin/css/admin.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2><i class="bi bi-shop"></i> PICCOLA Admin</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/admin}" class="menu-item"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li><a th:href="@{/admin/ordenes}" class="menu-item"><i class="bi bi-receipt"></i> Órdenes</a></li>
+                <li><a th:href="@{/admin/productos}" class="menu-item active"><i class="bi bi-box-seam"></i> Productos</a></li>
+                <li><a href="#" class="menu-item"><i class="bi bi-bar-chart"></i> Reportes</a></li>
+                <li><a href="#" class="menu-item"><i class="bi bi-gear"></i> Configuración</a></li>
+                <li><a th:href="@{/admin/kds}" class="menu-item"><i class="bi bi-display"></i> KDS</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="#" class="menu-item logout"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Gestión de Productos</h1>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="openProductModal()">
+                        <i class="bi bi-plus-circle"></i> Nuevo Producto
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="content-filters">
+                <div class="filter-group">
+                    <input type="text" id="searchProducts" placeholder="Buscar productos..." class="form-input">
+                    <select id="categoryFilter" class="form-select">
+                        <option value="">Todas las categorías</option>
+                        <option value="hamburguesas">Hamburguesas</option>
+                        <option value="broaster">Broaster</option>
+                        <option value="salchipapas">Salchipapas</option>
+                        <option value="bebidas">Bebidas</option>
+                    </select>
+                    <select id="statusFilter" class="form-select">
+                        <option value="">Todos los estados</option>
+                        <option value="disponible">Disponible</option>
+                        <option value="no-disponible">No Disponible</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3>Lista de Productos</h3>
+                    <span class="product-count">Total: <span id="productCount">0</span> productos</span>
+                </div>
+                <div class="card-content">
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Nombre</th>
+                                    <th>Categoría</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Destacado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nuevo Producto</h3>
+                <button class="modal-close" onclick="closeProductModal()">&times;</button>
+            </div>
+            <form id="productForm" class="modal-body">
+                <input type="hidden" id="productId">
+                
+                <div class="form-group">
+                    <label for="productName">Nombre del Producto</label>
+                    <input type="text" id="productName" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription">Descripción</label>
+                    <textarea id="productDescription" class="form-textarea" rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productCategory">Categoría</label>
+                        <select id="productCategory" class="form-select" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="1">Hamburguesas</option>
+                            <option value="2">Broaster</option>
+                            <option value="3">Salchipapas</option>
+                            <option value="4">Bebidas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Precio</label>
+                        <input type="number" id="productPrice" class="form-input" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productImage">URL de Imagen</label>
+                    <input type="url" id="productImage" class="form-input">
+                </div>
+
+                <div class="form-checkboxes">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="productAvailable">
+                        <span class="checkbox-custom"></span>
+                        Disponible
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="productFeatured">
+                        <span class="checkbox-custom"></span>
+                        Destacado
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="admin-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>Confirmar Acción</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">¿Está seguro de que desea realizar esta acción?</p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeConfirmModal()">Cancelar</button>
+                    <button type="button" class="btn-danger" id="confirmAction">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/admin/js/admin.js}"></script>
+    <script>
+        // Products management functionality
+        let products = [];
+        let editingProductId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            setupFilters();
+            setupProductForm();
+        });
+
+        function loadProducts() {
+            // TODO: Replace with actual API call
+            fetch('/api/admin/products')
+                .then(response => response.json())
+                .then(data => {
+                    products = data;
+                    renderProducts(products);
+                    updateProductCount();
+                })
+                .catch(error => {
+                    console.error('Error loading products:', error);
+                    showNotification('Error al cargar productos', 'error');
+                });
+        }
+
+        function renderProducts(productsToRender) {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = '';
+
+            productsToRender.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <img src="${product.imagen || '/imagenes/placeholder.jpg'}" 
+                             alt="${product.nombre}" class="product-image">
+                    </td>
+                    <td>${product.nombre}</td>
+                    <td>${product.categoriaNombre}</td>
+                    <td>S/ ${product.precio.toFixed(2)}</td>
+                    <td>
+                        <span class="status-badge ${product.disponible ? 'status-active' : 'status-inactive'}">
+                            ${product.disponible ? 'Disponible' : 'No Disponible'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${product.destacado ? 'status-featured' : 'status-normal'}">
+                            ${product.destacado ? 'Destacado' : 'Normal'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editProduct(${product.id})" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn-action btn-toggle" onclick="toggleProductAvailability(${product.id})" 
+                                    title="${product.disponible ? 'Deshabilitar' : 'Habilitar'}">
+                                <i class="bi bi-${product.disponible ? 'eye-slash' : 'eye'}"></i>
+                            </button>
+                            <button class="btn-action btn-featured" onclick="toggleProductFeatured(${product.id})" 
+                                    title="${product.destacado ? 'Quitar destacado' : 'Destacar'}">
+                                <i class="bi bi-star${product.destacado ? '-fill' : ''}"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteProduct(${product.id})" title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function setupFilters() {
+            const searchInput = document.getElementById('searchProducts');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const statusFilter = document.getElementById('statusFilter');
+
+            const applyFilters = () => {
+                let filtered = products.filter(product => {
+                    const matchesSearch = product.nombre.toLowerCase().includes(searchInput.value.toLowerCase()) ||
+                                        product.descripcion.toLowerCase().includes(searchInput.value.toLowerCase());
+                    const matchesCategory = !categoryFilter.value || product.categoriaNombre.toLowerCase() === categoryFilter.value;
+                    const matchesStatus = !statusFilter.value || 
+                                        (statusFilter.value === 'disponible' && product.disponible) ||
+                                        (statusFilter.value === 'no-disponible' && !product.disponible);
+                    
+                    return matchesSearch && matchesCategory && matchesStatus;
+                });
+                
+                renderProducts(filtered);
+                updateProductCount(filtered.length);
+            };
+
+            searchInput.addEventListener('input', applyFilters);
+            categoryFilter.addEventListener('change', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+        }
+
+        function updateProductCount(count = null) {
+            const countElement = document.getElementById('productCount');
+            countElement.textContent = count !== null ? count : products.length;
+        }
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('productModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('productForm');
+            
+            editingProductId = productId;
+            
+            if (productId) {
+                const product = products.find(p => p.id === productId);
+                if (product) {
+                    modalTitle.textContent = 'Editar Producto';
+                    fillProductForm(product);
+                }
+            } else {
+                modalTitle.textContent = 'Nuevo Producto';
+                form.reset();
+                document.getElementById('productAvailable').checked = true;
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            editingProductId = null;
+        }
+
+        function fillProductForm(product) {
+            document.getElementById('productId').value = product.id;
+            document.getElementById('productName').value = product.nombre;
+            document.getElementById('productDescription').value = product.descripcion || '';
+            document.getElementById('productCategory').value = product.categoriaId;
+            document.getElementById('productPrice').value = product.precio;
+            document.getElementById('productImage').value = product.imagen || '';
+            document.getElementById('productAvailable').checked = product.disponible;
+            document.getElementById('productFeatured').checked = product.destacado;
+        }
+
+        function setupProductForm() {
+            const form = document.getElementById('productForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveProduct();
+            });
+        }
+
+        function saveProduct() {
+            const formData = {
+                nombre: document.getElementById('productName').value,
+                descripcion: document.getElementById('productDescription').value,
+                categoriaId: parseInt(document.getElementById('productCategory').value),
+                precio: parseFloat(document.getElementById('productPrice').value),
+                imagen: document.getElementById('productImage').value,
+                disponible: document.getElementById('productAvailable').checked,
+                destacado: document.getElementById('productFeatured').checked
+            };
+
+            const url = editingProductId ? `/api/admin/products/${editingProductId}` : '/api/admin/products';
+            const method = editingProductId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(editingProductId ? 'Producto actualizado' : 'Producto creado', 'success');
+                    closeProductModal();
+                    loadProducts();
+                } else {
+                    showNotification(data.message || 'Error al guardar producto', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving product:', error);
+                showNotification('Error al guardar producto', 'error');
+            });
+        }
+
+        function editProduct(productId) {
+            openProductModal(productId);
+        }
+
+        function toggleProductAvailability(productId) {
+            fetch(`/api/admin/products/${productId}/toggle-availability`, {
+                method: 'PATCH'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Estado actualizado', 'success');
+                    loadProducts();
+                } else {
+                    showNotification('Error al actualizar estado', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling availability:', error);
+                showNotification('Error al actualizar estado', 'error');
+            });
+        }
+
+        function toggleProductFeatured(productId) {
+            fetch(`/api/admin/products/${productId}/toggle-featured`, {
+                method: 'PATCH'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Estado destacado actualizado', 'success');
+                    loadProducts();
+                } else {
+                    showNotification('Error al actualizar estado destacado', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling featured:', error);
+                showNotification('Error al actualizar estado destacado', 'error');
+            });
+        }
+
+        function deleteProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            showConfirmModal(
+                `¿Está seguro de que desea eliminar el producto "${product.nombre}"?`,
+                () => {
+                    fetch(`/api/admin/products/${productId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Producto eliminado', 'success');
+                            loadProducts();
+                        } else {
+                            showNotification('Error al eliminar producto', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting product:', error);
+                        showNotification('Error al eliminar producto', 'error');
+                    });
+                }
+            );
+        }
+
+        function showConfirmModal(message, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            const messageElement = document.getElementById('confirmMessage');
+            const confirmButton = document.getElementById('confirmAction');
+            
+            messageElement.textContent = message;
+            
+            confirmButton.onclick = () => {
+                closeConfirmModal();
+                onConfirm();
+            };
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

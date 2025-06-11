@@ -1,0 +1,183 @@
+/* Header Styles - PICCOLA */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-top: 10px;
+    min-width: 100%;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    background-color: black;
+    border-bottom: 3px #e0e0e0 solid;
+    font-family: "Montserrat", sans-serif;
+    height: 80px; /* Altura fija */
+    padding: 10px 20px;
+}
+.header-cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #FFD700;
+    color: #2C1810;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid black;
+    z-index: 1001;
+}
+
+/* Navigation */
+.nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.item-menus-general {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 2rem;
+}
+
+.item-menus {
+    display: flex;
+    align-items: center;
+}
+
+.link-menus {
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+    font-weight: bold;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.link-menus:hover {
+    color: yellow;
+    background-color: rgba(255, 255, 0, 0.1);
+}
+
+/* Logo */
+.contenedor-logo-piccola {
+    display: flex;
+    align-items: center;
+}
+
+.logo-piccola {
+    width: 50px;
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.logo-piccola:hover {
+    transform: scale(1.05);
+}
+
+/* Botones del header - NUEVO ESTILO PARA CARRITO */
+.contenedor-botones {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.contenedor-botones button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 50%;
+    position: relative;
+}
+
+/* Botón de carrito específico */
+#cartBtn {
+    background: linear-gradient(135deg, #D2691E, #FF6347);
+    padding: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(210, 105, 30, 0.3);
+}
+
+#cartBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(210, 105, 30, 0.5);
+}
+
+/* Contador del carrito en el header */
+.header-cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #FFD700;
+    color: #2C1810;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid black;
+    z-index: 1001;
+}
+
+.logo-carrito,
+.logo-login {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+    transition: all 0.3s ease;
+}
+
+#cartBtn .logo-carrito {
+    filter: invert(1);
+}
+
+button:hover .logo-login {
+    transform: scale(1.1);
+    filter: invert(79%) sepia(89%) saturate(790%) hue-rotate(359deg) brightness(101%) contrast(107%);
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 1rem;
+    }
+    
+    .item-menus-general {
+        flex-direction: row;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .contenedor-botones {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .item-menus-general {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
