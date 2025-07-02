@@ -39,6 +39,13 @@ public interface ProductService {
     
     Page<ProductResponse> getProductsByCategoryPaginated(Long categoryId, Pageable pageable);
     
+    // Nuevos métodos para filtrado avanzado
+    Page<ProductResponse> getProductsWithFilters(String search, Long categoryId, Boolean available, Pageable pageable);
+    
+    Page<ProductResponse> searchProductsPaginated(String searchTerm, Pageable pageable);
+    
+    Page<ProductResponse> getProductsByAvailability(Boolean available, Pageable pageable);
+    
     List<ProductResponse> getProductsWithIngredient(Long ingredientId);
     
     Long getProductSalesCount(Long productId);

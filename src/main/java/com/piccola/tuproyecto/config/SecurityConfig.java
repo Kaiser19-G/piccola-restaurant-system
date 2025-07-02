@@ -7,26 +7,29 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuración de seguridad para PICCOLA
- * 
- * TODO: Implementar autenticación JWT
- * TODO: Configurar roles USER, ADMIN, KITCHEN
- * TODO: Proteger endpoints de administración
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12); // Factor de 12 para mayor seguridad
     }
 
     @Bean
@@ -37,25 +40,53 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))            .authorizeHttpRequests(auth -> auth
-                // Recursos estáticos y páginas públicas
-                .requestMatchers("/css/**", "/js/**", "/imagenes/**").permitAll()
-                .requestMatchers("/client/**", "/admin/css/**", "/admin/js/**").permitAll()
-                .requestMatchers("/cliente/**", "/", "/inicio", "/menu", "/nosotros", "/contacto").permitAll()
+            // Configuración básica
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            
+            // Configuración de autorización
+            .authorizeHttpRequests(authz -> authz
+                // Recursos públicos
+                .requestMatchers("/", "/login", "/register", "/auth/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/client/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                .requestMatchers("/menu", "/nosotros", "/contacto").permitAll()
+                .requestMatchers("/error", "/favicon.ico").permitAll()
                 
-                // API pública
-                .requestMatchers("/api/auth/**", "/api/products/**").permitAll()
+                // APIs públicas
+                .requestMatchers("/api/public/**").permitAll()
                 
-                // API protegida
-                .requestMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
+                // Endpoints de administración
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 
+                // Endpoints de empleados
+                .requestMatchers("/empleado/**").hasAnyRole("ADMIN", "EMPLEADO")
+                .requestMatchers("/api/empleado/**").hasAnyRole("ADMIN", "EMPLEADO")
+                
+                // Endpoints de clientes autenticados
+                .requestMatchers("/cliente/**").hasAnyRole("ADMIN", "EMPLEADO", "CLIENTE")
+                .requestMatchers("/api/cliente/**").hasAnyRole("ADMIN", "EMPLEADO", "CLIENTE")
+                
+                // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             );
 
-        // TODO: Agregar filtro JWT aquí
-        
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

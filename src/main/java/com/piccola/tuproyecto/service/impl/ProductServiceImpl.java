@@ -84,9 +84,7 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .map(this::mapToProductResponse)
                 .toList();
-    }
-
-    @Override
+    }    @Override
     public ProductResponse createProduct(ProductRequest request) {
         Categoria categoria = categoriaRepository.findByIdAndActivoTrue(request.getCategoriaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + request.getCategoriaId()));
@@ -99,6 +97,8 @@ public class ProductServiceImpl implements ProductService {
                 .imagen(request.getImagenUrl())
                 .disponible(request.getDisponible() != null ? request.getDisponible() : true)
                 .destacado(request.getDestacado() != null ? request.getDestacado() : false)
+                .tiempoPreparacion(request.getTiempoPreparacion())
+                .caloriasAproximadas(request.getCalorias())
                 .activo(true)
                 .build();
 
@@ -133,6 +133,12 @@ public class ProductServiceImpl implements ProductService {
         }
         if (request.getDestacado() != null) {
             producto.setDestacado(request.getDestacado());
+        }
+        if (request.getTiempoPreparacion() != null) {
+            producto.setTiempoPreparacion(request.getTiempoPreparacion());
+        }
+        if (request.getCalorias() != null) {
+            producto.setCaloriasAproximadas(request.getCalorias());
         }
 
         Producto updatedProducto = productoRepository.save(producto);
@@ -190,6 +196,48 @@ public class ProductServiceImpl implements ProductService {
         return List.of();
     }
 
+    // Nuevos métodos para filtrado avanzado
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getProductsWithFilters(String search, Long categoryId, Boolean available, Pageable pageable) {
+        // Si hay búsqueda por texto
+        if (search != null && !search.trim().isEmpty()) {
+            return searchProductsPaginated(search.trim(), pageable);
+        }
+        
+        // Si hay filtro por categoría
+        if (categoryId != null) {
+            return getProductsByCategoryPaginated(categoryId, pageable);
+        }
+        
+        // Si hay filtro por disponibilidad
+        if (available != null) {
+            return getProductsByAvailability(available, pageable);
+        }
+        
+        // Si no hay filtros específicos, devolver todos los productos activos
+        return getProductsPaginated(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> searchProductsPaginated(String searchTerm, Pageable pageable) {
+        return productoRepository.findByNombreContainingIgnoreCaseAndActivoTrue(searchTerm, pageable)
+                .map(this::mapToProductResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getProductsByAvailability(Boolean available, Pageable pageable) {
+        if (available != null && available) {
+            return productoRepository.findByDisponibleTrueAndActivoTrue(pageable)
+                    .map(this::mapToProductResponse);
+        } else {
+            return productoRepository.findByDisponibleFalseAndActivoTrue(pageable)
+                    .map(this::mapToProductResponse);
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Long getProductSalesCount(Long productId) {
@@ -222,9 +270,7 @@ public class ProductServiceImpl implements ProductService {
         if (request.getNombre() != null && existsByName(request.getNombre())) {
             throw new IllegalArgumentException("Ya existe un producto con el nombre: " + request.getNombre());
         }
-    }
-
-    private ProductResponse mapToProductResponse(Producto producto) {
+    }    private ProductResponse mapToProductResponse(Producto producto) {
         return ProductResponse.builder()
                 .id(producto.getId())
                 .nombre(producto.getNombre())
@@ -232,9 +278,12 @@ public class ProductServiceImpl implements ProductService {
                 .precio(producto.getPrecio())
                 .categoriaId(producto.getCategoria().getId())
                 .categoria(producto.getCategoria().getNombre())
-                .categoriaNombre(producto.getCategoria().getNombre())                .imagenUrl(producto.getImagen())
+                .categoriaNombre(producto.getCategoria().getNombre())
+                .imagenUrl(producto.getImagen())
                 .disponible(producto.getDisponible())
                 .destacado(producto.getDestacado())
+                .tiempoPreparacion(producto.getTiempoPreparacion())
+                .calorias(producto.getCaloriasAproximadas())
                 .fechaCreacion(producto.getFechaCreacion())
                 .fechaActualizacion(producto.getFechaActualizacion())
                 .build();

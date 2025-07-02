@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit ? 'Editar Producto' : 'Nuevo Producto'} + ' - PICCOLA Admin'">Gestión de Productos - PICCOLA Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --primary-color: #FF6B35;
+            --secondary-color: #2C3E50;
+            --success-color: #27AE60;
+            --danger-color: #E74C3C;
+            --warning-color: #F39C12;
+            --info-color: #3498DB;
+            --light-color: #F8F9FA;
+            --dark-color: #2C3E50;
+        }
+
+        body {
+            background-color: var(--light-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-color), #FF8A65);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .form-label {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .required {
+            color: var(--danger-color);
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #FF8A65);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+        }
+
+        .invalid-feedback {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--danger-color);
+            margin-top: 0.25rem;
+        }
+
+        .is-invalid {
+            border-color: var(--danger-color) !important;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px dashed var(--primary-color);
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 4px;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload-btn {
+            background: var(--info-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-btn:hover {
+            background: #2980B9;
+        }
+
+        .form-section {
+            background: #F8F9FA;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .form-section h5 {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .char-counter {
+            font-size: 0.875rem;
+            color: #6C757D;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .action-buttons {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="admin-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h3 mb-0">
+                        <i class="bi bi-box-seam me-2"></i>
+                        <span th:text="${isEdit ? 'Editar Producto' : 'Nuevo Producto'}">Gestión de Productos</span>
+                    </h1>
+                    <p class="mb-0 opacity-75">Sistema de administración PICCOLA</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/admin/products" class="btn btn-light">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Mensajes de éxito/error -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Formulario de Producto -->
+        <div class="form-container">
+            <div class="form-header">
+                <h2>
+                    <i class="bi bi-box me-2"></i>
+                    <span th:text="${isEdit ? 'Editar Producto' : 'Crear Nuevo Producto'}">Información del Producto</span>
+                </h2>
+            </div>
+
+            <form th:action="${isEdit ? '/admin/products/' + productId : '/admin/products'}" 
+                  th:object="${product}" 
+                  method="post" 
+                  enctype="multipart/form-data"
+                  id="productForm">
+
+                <!-- Información Básica -->
+                <div class="form-section">
+                    <h5><i class="bi bi-info-circle me-2"></i>Información Básica</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">
+                                    Nombre del Producto <span class="required">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       th:class="${#fields.hasErrors('nombre')} ? 'form-control is-invalid' : 'form-control'"
+                                       id="nombre" 
+                                       th:field="*{nombre}" 
+                                       placeholder="Ej: Hamburguesa Royal"
+                                       maxlength="100"
+                                       required>
+                                <div class="char-counter">
+                                    <span id="nombreCounter">0</span>/100 caracteres
+                                </div>
+                                <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+                                    <span th:errors="*{nombre}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="categoriaId" class="form-label">
+                                    Categoría <span class="required">*</span>
+                                </label>
+                                <select class="form-select" 
+                                        th:class="${#fields.hasErrors('categoriaId')} ? 'form-select is-invalid' : 'form-select'"
+                                        id="categoriaId" 
+                                        th:field="*{categoriaId}" 
+                                        required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option th:each="category : ${categories}" 
+                                            th:value="${category.id}" 
+                                            th:text="${category.nombre}"
+                                            th:selected="${category.id == product.categoriaId}">
+                                    </option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('categoriaId')}" class="invalid-feedback">
+                                    <span th:errors="*{categoriaId}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">
+                            Descripción <span class="required">*</span>
+                        </label>
+                        <textarea class="form-control" 
+                                  th:class="${#fields.hasErrors('descripcion')} ? 'form-control is-invalid' : 'form-control'"
+                                  id="descripcion" 
+                                  th:field="*{descripcion}" 
+                                  rows="4" 
+                                  placeholder="Describe los ingredientes y características del producto..."
+                                  maxlength="500"
+                                  required></textarea>
+                        <div class="char-counter">
+                            <span id="descripcionCounter">0</span>/500 caracteres
+                        </div>
+                        <div th:if="${#fields.hasErrors('descripcion')}" class="invalid-feedback">
+                            <span th:errors="*{descripcion}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Precio y Configuración -->
+                <div class="form-section">
+                    <h5><i class="bi bi-currency-dollar me-2"></i>Precio y Configuración</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="precio" class="form-label">
+                                    Precio (S/) <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">S/</span>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           th:class="${#fields.hasErrors('precio')} ? 'form-control is-invalid' : 'form-control'"
+                                           id="precio" 
+                                           th:field="*{precio}" 
+                                           step="0.01" 
+                                           min="0.01" 
+                                           placeholder="0.00"
+                                           required>
+                                </div>
+                                <div th:if="${#fields.hasErrors('precio')}" class="invalid-feedback">
+                                    <span th:errors="*{precio}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="tiempoPreparacion" class="form-label">
+                                    Tiempo de Preparación (min)
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       th:class="${#fields.hasErrors('tiempoPreparacion')} ? 'form-control is-invalid' : 'form-control'"
+                                       id="tiempoPreparacion" 
+                                       th:field="*{tiempoPreparacion}" 
+                                       min="1" 
+                                       max="120" 
+                                       placeholder="15">
+                                <div th:if="${#fields.hasErrors('tiempoPreparacion')}" class="invalid-feedback">
+                                    <span th:errors="*{tiempoPreparacion}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="calorias" class="form-label">
+                                    Calorías (aprox.)
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="calorias" 
+                                       th:field="*{calorias}" 
+                                       min="0" 
+                                       placeholder="350">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="alergenos" class="form-label">Alérgenos</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="alergenos" 
+                               th:field="*{alergenos}" 
+                               placeholder="Ej: Gluten, Lactosa, Frutos secos">
+                        <small class="form-text text-muted">
+                            Separa múltiples alérgenos con comas
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Imagen del Producto -->
+                <div class="form-section">
+                    <h5><i class="bi bi-image me-2"></i>Imagen del Producto</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="imagenUrl" class="form-label">URL de Imagen</label>
+                                <input type="url" 
+                                       class="form-control" 
+                                       id="imagenUrl" 
+                                       th:field="*{imagenUrl}" 
+                                       placeholder="https://ejemplo.com/imagen.jpg">
+                                <small class="form-text text-muted">
+                                    Puedes ingresar una URL directa o subir un archivo
+                                </small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">O subir archivo</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" 
+                                           class="file-upload-input" 
+                                           id="imageFile" 
+                                           name="imageFile" 
+                                           accept="image/jpeg,image/png">
+                                    <button type="button" class="file-upload-btn" onclick="document.getElementById('imageFile').click()">
+                                        <i class="bi bi-cloud-upload me-1"></i>
+                                        Seleccionar Imagen
+                                    </button>
+                                </div>
+                                <small class="form-text text-muted">
+                                    Formatos: JPG, PNG. Tamaño máximo: 5MB
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="image-preview" id="imagePreview">
+                                <div th:if="${product.imagenUrl}" id="currentImage">
+                                    <img th:src="${product.imagenUrl}" alt="Imagen actual" class="img-fluid">
+                                    <p class="mt-2 mb-0 small text-muted">Imagen actual</p>
+                                </div>
+                                <div th:unless="${product.imagenUrl}" id="noImage">
+                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                    <p class="mt-2 mb-0 text-muted">Sin imagen</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado y Configuración -->
+                <div class="form-section">
+                    <h5><i class="bi bi-gear me-2"></i>Estado y Configuración</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="disponible" 
+                                       th:field="*{disponible}">
+                                <label class="form-check-label" for="disponible">
+                                    <strong>Producto Disponible</strong>
+                                    <br>
+                                    <small class="text-muted">Los clientes pueden ver y pedir este producto</small>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="destacado" 
+                                       th:field="*{destacado}">
+                                <label class="form-check-label" for="destacado">
+                                    <strong>Producto Destacado</strong>
+                                    <br>
+                                    <small class="text-muted">Se mostrará en la sección de productos destacados</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="action-buttons">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bi bi-check-lg me-1"></i>
+                                <span th:text="${isEdit ? 'Actualizar Producto' : 'Crear Producto'}">Guardar</span>
+                            </button>
+                            
+                            <a href="/admin/products" class="btn btn-secondary me-2">
+                                <i class="bi bi-x-lg me-1"></i>
+                                Cancelar
+                            </a>
+                            
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i>
+                                Limpiar Formulario
+                            </button>
+                        </div>
+                        
+                        <div class="col-md-4 text-end" th:if="${isEdit}">
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                                <i class="bi bi-trash me-1"></i>
+                                Eliminar Producto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Contador de caracteres
+        function setupCharCounters() {
+            const nombreInput = document.getElementById('nombre');
+            const descripcionInput = document.getElementById('descripcion');
+            const nombreCounter = document.getElementById('nombreCounter');
+            const descripcionCounter = document.getElementById('descripcionCounter');
+            
+            function updateCounter(input, counter) {
+                counter.textContent = input.value.length;
+            }
+            
+            if (nombreInput && nombreCounter) {
+                updateCounter(nombreInput, nombreCounter);
+                nombreInput.addEventListener('input', () => updateCounter(nombreInput, nombreCounter));
+            }
+            
+            if (descripcionInput && descripcionCounter) {
+                updateCounter(descripcionInput, descripcionCounter);
+                descripcionInput.addEventListener('input', () => updateCounter(descripcionInput, descripcionCounter));
+            }
+        }
+
+        // Preview de imagen
+        function setupImagePreview() {
+            const imageFileInput = document.getElementById('imageFile');
+            const imagenUrlInput = document.getElementById('imagenUrl');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            if (imageFileInput) {
+                imageFileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Validar tipo de archivo
+                        if (!file.type.match('image/(jpeg|png)')) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Archivo no válido',
+                                text: 'Solo se permiten archivos JPG y PNG'
+                            });
+                            this.value = '';
+                            return;
+                        }
+                        
+                        // Validar tamaño (5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Archivo muy grande',
+                                text: 'El archivo no puede ser mayor a 5MB'
+                            });
+                            this.value = '';
+                            return;
+                        }
+                        
+                        // Mostrar preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview" class="img-fluid">
+                                <p class="mt-2 mb-0 small text-muted">Vista previa</p>
+                            `;
+                            // Limpiar URL si se sube archivo
+                            imagenUrlInput.value = '';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            if (imagenUrlInput) {
+                imagenUrlInput.addEventListener('change', function() {
+                    if (this.value) {
+                        // Limpiar archivo si se ingresa URL
+                        imageFileInput.value = '';
+                        
+                        // Mostrar preview de URL
+                        imagePreview.innerHTML = `
+                            <img src="${this.value}" alt="Preview" class="img-fluid" 
+                                 onerror="this.parentElement.innerHTML='<i class=\\'bi bi-image-fill text-muted\\' style=\\'font-size: 3rem;\\'></i><p class=\\'mt-2 mb-0 text-muted\\'>Error al cargar imagen</p>'">
+                            <p class="mt-2 mb-0 small text-muted">Vista previa</p>
+                        `;
+                    }
+                });
+            }
+        }
+
+        // Validación del formulario
+        function setupFormValidation() {
+            const form = document.getElementById('productForm');
+            
+            form.addEventListener('submit', function(e) {
+                const nombre = document.getElementById('nombre').value.trim();
+                const descripcion = document.getElementById('descripcion').value.trim();
+                const precio = document.getElementById('precio').value;
+                const categoria = document.getElementById('categoriaId').value;
+                
+                let errors = [];
+                
+                if (!nombre) errors.push('El nombre es obligatorio');
+                if (nombre.length < 2) errors.push('El nombre debe tener al menos 2 caracteres');
+                if (!descripcion) errors.push('La descripción es obligatoria');
+                if (descripcion.length < 10) errors.push('La descripción debe tener al menos 10 caracteres');
+                if (!precio || precio <= 0) errors.push('El precio debe ser mayor a 0');
+                if (!categoria) errors.push('Debe seleccionar una categoría');
+                
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Errores en el formulario',
+                        html: errors.map(error => `• ${error}`).join('<br>')
+                    });
+                }
+            });
+        }
+
+        // Confirmar eliminación
+        function confirmDelete() {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción eliminará el producto permanentemente',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E74C3C',
+                cancelButtonColor: '#6C757D',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Crear formulario para eliminación
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/admin/products/${document.querySelector('[name="productId"]')?.value || ''}/delete`;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+
+        // Inicializar todo cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            setupCharCounters();
+            setupImagePreview();
+            setupFormValidation();
+        });
+
+        // Mostrar mensajes de éxito/error si existen
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+            
+            if (success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: success,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+            
+            if (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error
+                });
+            }
+        });
+    </script>
+</body>
+</html>

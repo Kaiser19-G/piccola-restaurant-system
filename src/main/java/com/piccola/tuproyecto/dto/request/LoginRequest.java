@@ -23,7 +23,7 @@ public class LoginRequest {
     private String email;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, max = 100, message = "La contraseña debe tener entre 6 y 100 caracteres")
+    @Size(min = 8, max = 100, message = "La contraseña debe tener mínimo 8 caracteres")
     private String password;
 
     // Campo opcional para recordar sesión

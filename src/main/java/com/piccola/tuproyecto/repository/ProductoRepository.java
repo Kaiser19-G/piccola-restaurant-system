@@ -60,5 +60,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     
     Page<Producto> findByCategoriaIdAndActivoTrue(Long categoriaId, Pageable pageable);
     
+    // Métodos adicionales para filtrado avanzado con paginación
+    Page<Producto> findByNombreContainingIgnoreCaseAndActivoTrue(String searchTerm, Pageable pageable);
+    
+    Page<Producto> findByDisponibleTrueAndActivoTrue(Pageable pageable);
+    
+    Page<Producto> findByDisponibleFalseAndActivoTrue(Pageable pageable);
+    
     boolean existsByNombreAndActivoTrue(String nombre);
 }

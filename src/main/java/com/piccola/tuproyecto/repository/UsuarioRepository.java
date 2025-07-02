@@ -1,5 +1,6 @@
 package com.piccola.tuproyecto.repository;
 
+import com.piccola.tuproyecto.entity.Rol;
 import com.piccola.tuproyecto.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +20,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     
     boolean existsByEmail(String email);
     
-    List<Usuario> findByRoleAndActivoTrueOrderByNombreAsc(Usuario.Role role);
+    List<Usuario> findByRolAndActivoTrueOrderByNombreAsc(Rol rol);
     
     List<Usuario> findByActivoTrueOrderByFechaRegistroDesc();
     
@@ -29,8 +30,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
            "LOWER(u.email) LIKE LOWER(CONCAT('%', :busqueda, '%')))")
     List<Usuario> buscarUsuarios(@Param("busqueda") String busqueda);
     
-    @Query("SELECT COUNT(u) FROM Usuario u WHERE u.role = :role AND u.activo = true")
-    Long countByRoleAndActivoTrue(@Param("role") Usuario.Role role);
+    @Query("SELECT COUNT(u) FROM Usuario u WHERE u.rol = :rol AND u.activo = true")
+    Long countByRolAndActivoTrue(@Param("rol") Rol rol);
     
     @Query("SELECT u FROM Usuario u WHERE u.fechaRegistro >= :fechaInicio")
     List<Usuario> findUsuariosRegistradosDespueDe(@Param("fechaInicio") LocalDateTime fechaInicio);

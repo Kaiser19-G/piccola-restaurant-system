@@ -3,6 +3,7 @@ package com.piccola.tuproyecto.service.impl;
 import com.piccola.tuproyecto.dto.request.LoginRequest;
 import com.piccola.tuproyecto.dto.request.RegisterRequest;
 import com.piccola.tuproyecto.dto.response.AuthResponse;
+import com.piccola.tuproyecto.entity.Rol;
 import com.piccola.tuproyecto.entity.Usuario;
 import com.piccola.tuproyecto.exception.BadRequestException;
 import com.piccola.tuproyecto.exception.UnauthorizedException;
@@ -47,14 +48,14 @@ public class AuthServiceImpl implements AuthService {
             usuario.setUltimoAcceso(LocalDateTime.now());
             usuarioRepository.save(usuario);
 
-            String token = jwtService.generateTokenWithRole(usuario, usuario.getRole().name());
+            String token = jwtService.generateTokenWithRole(usuario, usuario.getRol().name());
 
             return AuthResponse.builder()
                 .token(token)
                 .email(usuario.getEmail())
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
-                .role(usuario.getRole().name())
+                .role(usuario.getRol().name())
                 .build();
 
         } catch (Exception e) {
@@ -77,20 +78,20 @@ public class AuthServiceImpl implements AuthService {
         usuario.setApellido(request.getApellido());
         usuario.setTelefono(request.getTelefono());
         usuario.setDireccion(request.getDireccion());
-        usuario.setRole(Usuario.Role.USER);
+        usuario.setRol(Rol.CLIENTE);
         usuario.setActivo(true);
         usuario.setFechaRegistro(LocalDateTime.now());
 
         usuario = usuarioRepository.save(usuario);
 
-        String token = jwtService.generateTokenWithRole(usuario, usuario.getRole().name());
+        String token = jwtService.generateTokenWithRole(usuario, usuario.getRol().name());
 
         return AuthResponse.builder()
             .token(token)
             .email(usuario.getEmail())
             .nombre(usuario.getNombre())
             .apellido(usuario.getApellido())
-            .role(usuario.getRole().name())
+            .role(usuario.getRol().name())
             .build();
     }
 
@@ -108,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UnauthorizedException("Usuario no encontrado"));
 
             // Verificar que sea empleado o admin
-            if (usuario.getRole() == Usuario.Role.USER) {
+            if (usuario.getRol() == Rol.CLIENTE) {
                 throw new UnauthorizedException("Acceso denegado - Solo empleados");
             }
 
@@ -116,14 +117,14 @@ public class AuthServiceImpl implements AuthService {
             usuario.setUltimoAcceso(LocalDateTime.now());
             usuarioRepository.save(usuario);
 
-            String token = jwtService.generateTokenWithRole(usuario, usuario.getRole().name());
+            String token = jwtService.generateTokenWithRole(usuario, usuario.getRol().name());
 
             return AuthResponse.builder()
                 .token(token)
                 .email(usuario.getEmail())
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
-                .role(usuario.getRole().name())
+                .role(usuario.getRol().name())
                 .build();
 
         } catch (Exception e) {

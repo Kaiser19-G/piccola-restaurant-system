@@ -49,7 +49,8 @@ public class ViewController {
     @GetMapping("/confirmacion/{orderId}")
     public String confirmacion(@PathVariable Long orderId, Model model) {
         // TODO: Cargar detalles de la orden
-        model.addAttribute("orderId", orderId);        return "client/confirmacion_orden";
+        model.addAttribute("orderId", orderId);        
+        return "client/confirmacion_orden";
     }
 
     // Páginas del perfil de usuario

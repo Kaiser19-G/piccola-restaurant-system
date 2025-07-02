@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse - PICCOLA</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --piccola-orange: #FF6B35;
+            --piccola-red: #DC3545;
+            --piccola-dark: #2C3E50;
+            --piccola-light: #F8F9FA;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--piccola-orange), var(--piccola-red));
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, var(--piccola-orange), var(--piccola-red));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .register-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin-bottom: 1rem;
+        }
+
+        .register-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .register-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .register-body {
+            padding: 2rem;
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--piccola-orange);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+        }
+
+        .form-control.is-valid {
+            border-color: #28a745;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--piccola-orange), var(--piccola-red));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 600;
+            width: 100%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--piccola-orange);
+            border-color: var(--piccola-orange);
+        }
+
+        .register-footer {
+            text-align: center;
+            padding: 1rem 2rem 2rem;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 1rem;
+        }
+
+        .login-link {
+            color: var(--piccola-orange);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link:hover {
+            color: var(--piccola-red);
+            text-decoration: underline;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .strength-weak { color: #dc3545; }
+        .strength-medium { color: #ffc107; }
+        .strength-strong { color: #28a745; }
+
+        .password-match {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .match-success { color: #28a745; }
+        .match-error { color: #dc3545; }
+
+        .input-group {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <!-- Header -->
+            <div class="register-header">
+                <img th:src="@{/imagenes/logoEmpresa.png}" alt="PICCOLA Logo">
+                <h2>¡Únete a PICCOLA!</h2>
+                <p>Crea tu cuenta y disfruta de nuestras deliciosas hamburguesas</p>
+            </div>
+
+            <!-- Body -->
+            <div class="register-body">
+                <!-- Formulario de Registro -->
+                <form id="registerForm" novalidate>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="nombre" name="nombre" 
+                                       placeholder="Tu nombre" required minlength="2" maxlength="100">
+                                <label for="nombre"><i class="fas fa-user me-2"></i>Nombre</label>
+                                <div class="invalid-feedback">
+                                    El nombre debe tener entre 2 y 100 caracteres.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="apellido" name="apellido" 
+                                       placeholder="Tu apellido" maxlength="100">
+                                <label for="apellido"><i class="fas fa-user me-2"></i>Apellido</label>
+                                <div class="invalid-feedback">
+                                    El apellido no puede exceder 100 caracteres.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="name@example.com" required>
+                        <label for="email"><i class="fas fa-envelope me-2"></i>Email</label>
+                        <div class="invalid-feedback">
+                            Por favor ingresa un email válido.
+                        </div>
+                        <div class="valid-feedback">
+                            Email disponible.
+                        </div>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="tel" class="form-control" id="telefono" name="telefono" 
+                               placeholder="987654321" maxlength="15">
+                        <label for="telefono"><i class="fas fa-phone me-2"></i>Teléfono (opcional)</label>
+                        <div class="invalid-feedback">
+                            El teléfono no puede exceder 15 caracteres.
+                        </div>
+                    </div>
+
+                    <div class="form-floating">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Contraseña" required minlength="8">
+                            <button type="button" class="password-toggle" onclick="togglePassword('password', 'passwordIcon1')">
+                                <i class="fas fa-eye" id="passwordIcon1"></i>
+                            </button>
+                        </div>
+                        <label for="password"><i class="fas fa-lock me-2"></i>Contraseña</label>
+                        <div class="password-strength" id="passwordStrength"></div>
+                        <div class="invalid-feedback">
+                            La contraseña debe tener mínimo 8 caracteres.
+                        </div>
+                    </div>
+
+                    <div class="form-floating">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                   placeholder="Confirmar contraseña" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', 'passwordIcon2')">
+                                <i class="fas fa-eye" id="passwordIcon2"></i>
+                            </button>
+                        </div>
+                        <label for="confirmPassword"><i class="fas fa-lock me-2"></i>Confirmar Contraseña</label>
+                        <div class="password-match" id="passwordMatch"></div>
+                        <div class="invalid-feedback">
+                            Las contraseñas deben coincidir.
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="aceptaTerminos" name="aceptaTerminos" required>
+                        <label class="form-check-label" for="aceptaTerminos">
+                            Acepto los <a href="#" class="login-link">términos y condiciones</a>
+                        </label>
+                        <div class="invalid-feedback">
+                            Debes aceptar los términos y condiciones.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-register">
+                        <span class="btn-text">
+                            <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                        </span>
+                        <div class="loading-spinner" style="display: none;">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Registrando...
+                        </div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="register-footer">
+                <p class="mb-2">¿Ya tienes cuenta?</p>
+                <a th:href="@{/login}" class="login-link">
+                    <i class="fas fa-sign-in-alt me-1"></i>Inicia sesión aquí
+                </a>
+                <br><br>
+                <a th:href="@{/}" class="text-muted text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i>Volver al inicio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Variables globales
+        let emailTimeout;
+
+        // Toggle password visibility
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordIcon = document.getElementById(iconId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Validar fuerza de contraseña
+        function checkPasswordStrength(password) {
+            const strengthDiv = document.getElementById('passwordStrength');
+            let strength = 0;
+            let feedback = [];
+
+            if (password.length >= 8) strength++;
+            else feedback.push('mínimo 8 caracteres');
+
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('una letra minúscula');
+
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('una letra mayúscula');
+
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('un número');
+
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            else feedback.push('un símbolo especial');
+
+            let className, message;
+            if (strength < 3) {
+                className = 'strength-weak';
+                message = 'Débil - Faltan: ' + feedback.slice(0, 2).join(', ');
+            } else if (strength < 5) {
+                className = 'strength-medium';
+                message = 'Media - Faltan: ' + feedback.join(', ');
+            } else {
+                className = 'strength-strong';
+                message = 'Fuerte - Contraseña segura';
+            }
+
+            strengthDiv.className = `password-strength ${className}`;
+            strengthDiv.textContent = message;
+        }
+
+        // Validar coincidencia de contraseñas
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const matchDiv = document.getElementById('passwordMatch');
+
+            if (confirmPassword === '') {
+                matchDiv.textContent = '';
+                return;
+            }
+
+            if (password === confirmPassword) {
+                matchDiv.className = 'password-match match-success';
+                matchDiv.innerHTML = '<i class="fas fa-check"></i> Las contraseñas coinciden';
+            } else {
+                matchDiv.className = 'password-match match-error';
+                matchDiv.innerHTML = '<i class="fas fa-times"></i> Las contraseñas no coinciden';
+            }
+        }
+
+        // Verificar disponibilidad de email
+        async function checkEmailAvailability(email) {
+            if (!email || !email.includes('@')) return;
+
+            try {
+                const response = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
+                const data = await response.json();
+                
+                const emailInput = document.getElementById('email');
+                if (data.success && data.data === true) {
+                    emailInput.classList.remove('is-invalid');
+                    emailInput.classList.add('is-valid');
+                } else {
+                    emailInput.classList.remove('is-valid');
+                    emailInput.classList.add('is-invalid');
+                    emailInput.nextElementSibling.nextElementSibling.textContent = 'Este email ya está registrado';
+                }
+            } catch (error) {
+                console.error('Error verificando email:', error);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('password').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            checkPasswordMatch();
+        });
+
+        document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
+
+        document.getElementById('email').addEventListener('input', function() {
+            clearTimeout(emailTimeout);
+            emailTimeout = setTimeout(() => {
+                checkEmailAvailability(this.value);
+            }, 500);
+        });
+
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const submitBtn = form.querySelector('.btn-register');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+            
+            // Validación del formulario
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            // Verificar coincidencia de contraseñas
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password !== confirmPassword) {
+                showAlert('danger', 'Las contraseñas no coinciden');
+                return;
+            }
+            
+            // Mostrar loading
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            submitBtn.disabled = true;
+            
+            try {
+                const formData = new FormData(form);
+                const registerData = {
+                    nombre: formData.get('nombre'),
+                    apellido: formData.get('apellido'),
+                    email: formData.get('email'),
+                    telefono: formData.get('telefono'),
+                    password: formData.get('password'),
+                    confirmPassword: formData.get('confirmPassword'),
+                    aceptaTerminos: formData.get('aceptaTerminos') === 'on'
+                };
+                
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(registerData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('success', '¡Registro exitoso! Redirigiendo al login...');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || 'Error en el registro');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('danger', error.message || 'Error al registrarse');
+            } finally {
+                // Ocultar loading
+                btnText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Función para mostrar alertas
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const form = document.getElementById('registerForm');
+            form.insertBefore(alertDiv, form.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Validación en tiempo real
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.checkValidity() && this.id !== 'email') {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

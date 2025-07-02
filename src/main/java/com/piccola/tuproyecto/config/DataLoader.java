@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-@Component
+// @Component
 @RequiredArgsConstructor
 @Slf4j
 public class DataLoader implements CommandLineRunner {
@@ -36,7 +36,7 @@ public class DataLoader implements CommandLineRunner {
                 .email("admin@piccola.pe")
                 .password(passwordEncoder.encode("admin123"))
                 .telefono("123456789")
-                .role(Usuario.Role.ADMIN)
+                .rol(Rol.ADMIN)
                 .build();
         usuarioRepository.save(admin);
 
@@ -47,7 +47,7 @@ public class DataLoader implements CommandLineRunner {
                 .email("cocina@piccola.pe")
                 .password(passwordEncoder.encode("cocina123"))
                 .telefono("987654321")
-                .role(Usuario.Role.EMPLOYEE)
+                .rol(Rol.EMPLEADO)
                 .build();
         usuarioRepository.save(employee);
 
@@ -58,7 +58,7 @@ public class DataLoader implements CommandLineRunner {
                 .email("cliente@test.com")
                 .password(passwordEncoder.encode("cliente123"))
                 .telefono("999888777")
-                .role(Usuario.Role.USER)
+                .rol(Rol.CLIENTE)
                 .build();
         usuarioRepository.save(customer);
 

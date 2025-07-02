@@ -42,10 +42,10 @@ public class Usuario implements UserDetails {
     
     @Column(length = 500)
     private String direccion;
-      @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Role role = Role.USER;
+    private Rol rol = Rol.CLIENTE;
     
     @Column(nullable = false)
     @Builder.Default
@@ -57,16 +57,12 @@ public class Usuario implements UserDetails {
     
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
-      @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Orden> ordenes;
-
-    public enum Role {
-        USER, ADMIN, EMPLOYEE
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }    @Override
     public String getUsername() {
         return email;
