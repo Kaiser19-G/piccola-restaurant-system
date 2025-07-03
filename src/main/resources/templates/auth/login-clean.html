@@ -10,9 +10,9 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" th:href="@{/auth/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
 <body>
     <div class="login-container">
@@ -25,22 +25,15 @@
 
         <!-- Body -->
         <div class="login-body">
-            <!-- Alert Error -->
-            <div class="alert alert-danger" id="errorAlert" style="display: none;">
-                Error de login
+            <!-- Mensajes de error/éxito -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
             </div>
-            
-            <!-- Alert Success -->
-            <div class="alert alert-success" id="successAlert" style="display: none;">
-                Login exitoso
-            </div>
-            
-            <!-- Loading Spinner -->
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <span class="ms-2">Iniciando sesión...</span>
+
+            <div th:if="${message}" class="alert alert-success" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${message}"></span>
             </div>
 
             <!-- Formulario de Login -->
@@ -50,16 +43,16 @@
                            placeholder="name@example.com" required>
                     <label for="email"><i class="fas fa-envelope me-2"></i>Email</label>
                     <div class="invalid-feedback">
-                        Este campo es obligatorio.
+                        Por favor ingresa un email válido.
                     </div>
                 </div>
 
                 <div class="form-floating">
                     <input type="password" class="form-control" id="password" name="password" 
-                           placeholder="Contraseña" required>
+                           placeholder="Contraseña" required minlength="6">
                     <label for="password"><i class="fas fa-lock me-2"></i>Contraseña</label>
                     <div class="invalid-feedback">
-                        Este campo es obligatorio.
+                        La contraseña debe tener mínimo 6 caracteres.
                     </div>
                 </div>
 
@@ -97,7 +90,7 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Login JS -->
-    <script th:src="@{/auth/js/login.js}"></script>
+    <!-- JavaScript personalizado -->
+    <script th:src="@{/js/auth.js}"></script>
 </body>
 </html>

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PICCOLA</title>    <link rel="stylesheet" th:href="@{/client/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/client/css/auth-state.css}">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script th:src="@{/client/js/auth-state.js}"></script>
     <script th:src="@{/client/js/modal.js}"></script>
 </head>
 <body>
@@ -33,10 +35,11 @@
             </ul>
         </nav>
         <div class="contenedor-botones">
-            <button id="userBtn">
+            <button id="userBtn" onclick="window.location.href='/login?returnUrl=' + encodeURIComponent(window.location.pathname)">
                 <svg class="logo-login" viewBox="0 0 24 24">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
+                <span id="userStatus">Iniciar Sesión</span>
             </button>
             <button id="cartBtn">
                 <svg class="logo-carrito" viewBox="0 0 24 24">
